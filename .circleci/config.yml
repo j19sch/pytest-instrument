@@ -45,7 +45,7 @@ jobs:
       - run:
           name: run tests
           command: |
-            tox
+            tox -e py36,flake8,black
 
       - store_artifacts:
           path: test-reports
