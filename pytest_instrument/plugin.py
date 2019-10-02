@@ -1,4 +1,5 @@
 import logging
+import pytest
 
 LOGGER = logging.getLogger("pytest-metrics")
 
@@ -13,6 +14,16 @@ def pytest_runtest_setup(item):
     except StopIteration:
         instrument_mark = ()
     print(f"\n---> instrument mark: {instrument_mark}")
+
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    result = outcome.get_result()
+
+    print(
+        f"\n---> result: {result.nodeid}, {result.when}, {result.outcome}, {result.duration}"
+    )
 
 
 #
