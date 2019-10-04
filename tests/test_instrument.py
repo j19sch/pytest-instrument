@@ -121,7 +121,7 @@ def test_result_teardown_fails(testdir):
         @pytest.fixture
         def teardown_fails():
             yield
-    
+
             assert False
 
         def test_passes(teardown_fails):
