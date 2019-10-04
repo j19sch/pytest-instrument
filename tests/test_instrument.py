@@ -1,6 +1,3 @@
-import pytest
-
-
 def test_mark_test(testdir):
     testdir.makepyfile(
         """
@@ -80,7 +77,7 @@ def test_result_setup_fails(testdir):
         def setup_fails():
             assert False
 
-        def test_passes(setup_passes):
+        def test_passes(setup_fails):
             assert True
     """
     )
@@ -103,7 +100,7 @@ def test_result_teardown_pass(testdir):
             yield
             pass
 
-        def test_passes():
+        def test_passes(teardown_passes):
             assert True
     """
     )
@@ -116,20 +113,18 @@ def test_result_teardown_pass(testdir):
     )
 
 
-@pytest.mark.xfail(
-    reason="---> result: test_result_teardown_fails.py::test_passes, teardown, passed, 7.033348083496094e-05"
-)
 def test_result_teardown_fails(testdir):
     testdir.makepyfile(
         """
         import pytest
 
         @pytest.fixture
-        def teardown_passes():
+        def teardown_fails():
             yield
+    
             assert False
 
-        def test_passes():
+        def test_passes(teardown_fails):
             assert True
     """
     )

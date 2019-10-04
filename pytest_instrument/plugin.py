@@ -1,5 +1,4 @@
 import logging
-import pytest
 
 LOGGER = logging.getLogger("pytest-metrics")
 
@@ -9,6 +8,7 @@ def pytest_configure(config):
 
 
 def pytest_runtest_setup(item):
+    #     item.user_properties.append(('metrics', next(_.args for _ in item.iter_markers('metrics'))))
     try:
         instrument_mark = next(_.args for _ in item.iter_markers("instrument"))
     except StopIteration:
@@ -16,30 +16,11 @@ def pytest_runtest_setup(item):
     print(f"\n---> instrument mark: {instrument_mark}")
 
 
-@pytest.hookimpl(tryfirst=True, hookwrapper=True)
-def pytest_runtest_makereport(item, call):
-    outcome = yield
-    result = outcome.get_result()
-
-    print(
-        f"\n---> result: {result.nodeid}, {result.when}, {result.outcome}, {result.duration}"
-    )
-
-
-#
-# def pytest_runtest_setup(item):
-#     item.user_properties.append(('metrics', next(_.args for _ in item.iter_markers('metrics'))))
-#     LOGGER.info(f"item: {item.__dict__}")
-#
-#
 # def pytest_runtest_makereport(item, call):
-#     LOGGER.info(f"item: {item.__dict__}")
-# #     LOGGER.info(f"metrics: {next(_.args for _ in item.iter_markers('metrics'))}")
-# #     if call.when == 'setup':
-# #         item.user_properties.append(('metrics', next(_.args for _ in item.iter_markers('metrics'))))
-# #
-#     LOGGER.info(f"call: {call.__dict__}")
-#
-#
-# def pytest_runtest_logreport(report):
-#     LOGGER.info(f"report: {report.__dict__}")
+# item.user_properties.append((call.when, "Buzz"))
+
+
+def pytest_runtest_logreport(report):
+    print(
+        f"\n---> result: {report.nodeid}, {report.when}, {report.outcome}, {report.duration}"
+    )
