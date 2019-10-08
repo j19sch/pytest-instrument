@@ -14,14 +14,6 @@ pytest-instrument
     :target: https://circleci.com/gh/j19sch/pytest-instrument/tree/master
     :alt: See Build Status on Circle CI
 
-.. image:: https://travis-ci.org/j19sch/pytest-instrument.svg?branch=master
-    :target: https://travis-ci.org/j19sch/pytest-instrument
-    :alt: See Build Status on Travis CI
-
-.. image:: https://ci.appveyor.com/api/projects/status/github/j19sch/pytest-instrument?branch=master
-    :target: https://ci.appveyor.com/project/j19sch/pytest-instrument/branch/master
-    :alt: See Build Status on AppVeyor
-
 pytest plugin to instrument tests
 
 ----
