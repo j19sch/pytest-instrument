@@ -9,54 +9,60 @@ def tests_filename(testdir):
 
 
 def test_result_call_passes(testdir, tests_filename):
-    result = testdir.runpytest("-vs", "-k", "test_passes")
+    test_to_run = "test_passes"
+    result = testdir.runpytest("-vs", "-k", test_to_run)
 
     # ToDo: check duration somehow
     result.stdout.fnmatch_lines(
-        f"---> result: {tests_filename}::test_passes, call, passed, *"
+        f"---> result: {tests_filename}::{test_to_run}, call, passed, *"
     )
 
 
 def test_result_call_fails(testdir, tests_filename):
-    result = testdir.runpytest("-vs", "-k", "test_fails")
+    test_to_run = "test_fails"
+    result = testdir.runpytest("-vs", "-k", test_to_run)
 
     # ToDo: check duration somehow
     result.stdout.fnmatch_lines(
-        f"---> result: {tests_filename}::test_fails, call, failed, *"
+        f"---> result: {tests_filename}::{test_to_run}, call, failed, *"
     )
 
 
 def test_result_setup_passes(testdir, tests_filename):
-    result = testdir.runpytest("-vs", "-k", "test_setup_passes")
+    test_to_run = "test_setup_passes"
+    result = testdir.runpytest("-vs", "-k", test_to_run)
 
     # ToDo: check duration somehow
     result.stdout.fnmatch_lines(
-        f"---> result: {tests_filename}::test_setup_passes, setup, passed, *"
+        f"---> result: {tests_filename}::{test_to_run}, setup, passed, *"
     )
 
 
 def test_result_setup_fails(testdir, tests_filename):
-    result = testdir.runpytest("-vs", "-k", "test_setup_fails")
+    test_to_run = "test_setup_fails"
+    result = testdir.runpytest("-vs", "-k", test_to_run)
 
     # ToDo: check duration somehow
     result.stdout.fnmatch_lines(
-        f"---> result: {tests_filename}::test_setup_fails, setup, failed, *"
+        f"---> result: {tests_filename}::{test_to_run}, setup, failed, *"
     )
 
 
 def test_result_teardown_passes(testdir, tests_filename):
-    result = testdir.runpytest("-vs", "-k", "test_teardown_passes")
+    test_to_run = "test_teardown_passes"
+    result = testdir.runpytest("-vs", "-k", test_to_run)
 
     # ToDo: check duration somehow
     result.stdout.fnmatch_lines(
-        f"---> result: {tests_filename}::test_teardown_passes, teardown, passed, *"
+        f"---> result: {tests_filename}::{test_to_run}, teardown, passed, *"
     )
 
 
 def test_result_teardown_fails(testdir, tests_filename):
-    result = testdir.runpytest("-vs", "-k", "test_teardown_fails")
+    test_to_run = "test_teardown_fails"
+    result = testdir.runpytest("-vs", "-k", test_to_run)
 
     # ToDo: check duration somehow
     result.stdout.fnmatch_lines(
-        f"---> result: {tests_filename}::test_teardown_fails, teardown, failed, *"
+        f"---> result: {tests_filename}::{test_to_run}, teardown, failed, *"
     )
