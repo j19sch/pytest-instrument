@@ -75,3 +75,16 @@ def test_result_setup_and_teardown_fail(testdir, tests_filename):
     ]
 
     result.stdout.fnmatch_lines(expected_lines)
+
+
+def test_result_skipped(testdir, tests_filename):
+    test_to_run = "test_skipped"
+    result = testdir.runpytest("-vs", f"{tests_filename}::{test_to_run}")
+    result.assert_outcomes(error=0, failed=0, passed=0, skipped=1)
+
+    expected_lines = [
+        f'---> record: *, "when": "setup", "outcome": "skipped"*',
+        f'---> record: *, "when": "teardown", "outcome": "passed"*',
+    ]
+
+    result.stdout.fnmatch_lines(expected_lines)

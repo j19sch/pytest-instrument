@@ -49,3 +49,8 @@ def test_teardown_fails(teardown_fails):
 
 def test_setup_and_teardown_fail(setup_fails, teardown_fails):
     assert True
+
+
+@pytest.mark.skip
+def test_skipped():
+    assert True
