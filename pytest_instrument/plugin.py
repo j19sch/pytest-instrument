@@ -1,26 +1,22 @@
-import logging
-
-LOGGER = logging.getLogger("pytest-metrics")
-
-
 def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
 
 def pytest_runtest_setup(item):
-    #     item.user_properties.append(('metrics', next(_.args for _ in item.iter_markers('metrics'))))
     try:
-        instrument_mark = next(_.args for _ in item.iter_markers("instrument"))
+        instrument_marks = next(_.args for _ in item.iter_markers("instrument"))
     except StopIteration:
-        instrument_mark = ()
-    print(f"\n---> instrument mark: {instrument_mark}")
+        instrument_marks = ()
 
-
-# def pytest_runtest_makereport(item, call):
-# item.user_properties.append((call.when, "Buzz"))
+    item.user_properties.append(("instrument", instrument_marks))
 
 
 def pytest_runtest_logreport(report):
+    marks = ()
+    for prop in (prop for prop in report.user_properties if prop[0] == "instrument"):
+        marks = prop[1]
+
+    print(f"\n---> marks: {marks}")
     print(
         f"\n---> result: {report.nodeid}, {report.when}, {report.outcome}, {report.duration}"
     )
