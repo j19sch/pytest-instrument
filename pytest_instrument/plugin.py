@@ -1,3 +1,6 @@
+import json
+
+
 def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
@@ -16,7 +19,12 @@ def pytest_runtest_logreport(report):
     for prop in (prop for prop in report.user_properties if prop[0] == "instrument"):
         marks = prop[1]
 
-    print(f"\n---> marks: {marks}")
-    print(
-        f"\n---> result: {report.nodeid}, {report.when}, {report.outcome}, {report.duration}"
-    )
+    record = {
+        "node_id": report.nodeid,
+        "when": report.when,
+        "outcome": report.outcome,
+        "duration": report.duration,
+        "marks": marks,
+    }
+
+    print(f"\n---> record: {json.dumps(record)}")

@@ -45,3 +45,7 @@ def test_fails():
 
 def test_teardown_fails(teardown_fails):
     assert True
+
+
+def test_setup_and_teardown_fail(setup_fails, teardown_fails):
+    assert True
