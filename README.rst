@@ -27,6 +27,11 @@ Features
 * TODO
 
 
+Labels and tags
+~~~~~~~~~~~~~~~
+You can add labels and tags with `@pytest.mark.instrument()`. `args` become labels; `kwargs` become tags.
+
+
 Requirements
 ------------
 

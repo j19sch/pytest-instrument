@@ -8,41 +8,85 @@ def tests_filename(testdir):
     return filename
 
 
-def test_mark_test(testdir, tests_filename):
-    result = testdir.runpytest("-vs", "--instrument", f"{tests_filename}::test_mark")
-    result.assert_outcomes(passed=1)
-
-    expected_lines = [
-        '---> record: *, "when": "setup", *, "marks": [[]"a_mark"[]]*',
-        '---> record: *, "when": "call", *, "marks": [[]"a_mark"[]]*',
-        '---> record: *, "when": "teardown", *, "marks": [[]"a_mark"[]]*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
-
-
-def test_multiple_mark_test(testdir, tests_filename):
+def test_single_arg_in_mark_instrument(testdir, tests_filename):
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::test_multiple_marks"
+        "-vs", "--instrument", f"{tests_filename}::test_single_arg_in_mark"
     )
     result.assert_outcomes(passed=1)
 
     expected_lines = [
-        '---> record: *, "when": "setup", *, "marks": [[]"a_mark", "another_mark"[]]*',
-        '---> record: *, "when": "call", *, "marks": [[]"a_mark", "another_mark"[]]*',
-        '---> record: *, "when": "teardown", *, "marks": [[]"a_mark", "another_mark"[]]*',
+        '---> record: *, "when": "setup", *, "labels": [[]"a_mark"[]]*',
+        '---> record: *, "when": "call", *, "labels": [[]"a_mark"[]]*',
+        '---> record: *, "when": "teardown", *, "labels": [[]"a_mark"[]]*',
     ]
     result.stdout.fnmatch_lines(expected_lines)
 
 
-def test_without_mark_test(testdir, tests_filename):
+def test_single_kwarg_in_mark_instrument(testdir, tests_filename):
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::test_single_kwarg_in_mark"
+    )
+    result.assert_outcomes(passed=1)
+
+    expected_lines = [
+        '---> record: *, "when": "setup", *, "tags": {"my_mark": "a_mark"}*',
+        '---> record: *, "when": "call", *, "tags": {"my_mark": "a_mark"}*',
+        '---> record: *, "when": "teardown", *, "tags": {"my_mark": "a_mark"}*',
+    ]
+    result.stdout.fnmatch_lines(expected_lines)
+
+
+def test_multiple_args_in_mark_instrument(testdir, tests_filename):
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::test_multiple_args_in_mark"
+    )
+    result.assert_outcomes(passed=1)
+
+    expected_lines = [
+        '---> record: *, "when": "setup", *, "labels": [[]"a_mark", "another_mark"[]]*',
+        '---> record: *, "when": "call", *, "labels": [[]"a_mark", "another_mark"[]]*',
+        '---> record: *, "when": "teardown", *, "labels": [[]"a_mark", "another_mark"[]]*',
+    ]
+    result.stdout.fnmatch_lines(expected_lines)
+
+
+def test_multiple_kwargs_in_mark_instrument(testdir, tests_filename):
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::test_multiple_kwargs_in_mark"
+    )
+    result.assert_outcomes(passed=1)
+
+    expected_lines = [
+        '---> record: *, "when": "setup", *, "tags": {"my_mark": "a_mark", "my_other_mark": "another_mark"}*',
+        '---> record: *, "when": "call", *, "tags": {"my_mark": "a_mark", "my_other_mark": "another_mark"}*',
+        '---> record: *, "when": "teardown", *, "tags": {"my_mark": "a_mark", "my_other_mark": "another_mark"}*',
+    ]
+    result.stdout.fnmatch_lines(expected_lines)
+
+
+def test_with_single_arg_and_single_kwarg_in_mark_instrument(testdir, tests_filename):
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::test_with_args_and_kwargs_in_mark"
+    )
+    result.assert_outcomes(passed=1)
+
+    expected_lines = [
+        '---> record: *, "when": "setup", *, "labels": [[]"a_mark"[]], "tags": {"my_mark": "a_mark"}*',
+        '---> record: *, "when": "call", *, "labels": [[]"a_mark"[]], "tags": {"my_mark": "a_mark"}*',
+        '---> record: *, "when": "teardown", *, "labels": [[]"a_mark"[]], "tags": {"my_mark": "a_mark"}*',
+    ]
+    result.stdout.fnmatch_lines(expected_lines)
+
+
+def test_without_args_or_kwars_in_mark_instrument(testdir, tests_filename):
     result = testdir.runpytest(
         "-vs", "--instrument", f"{tests_filename}::test_without_mark"
     )
     result.assert_outcomes(passed=1)
 
     expected_lines = [
-        '---> record: *, "when": "setup", *, "marks": [[][]]*',
-        '---> record: *, "when": "call", *, "marks": [[][]]*',
-        '---> record: *, "when": "teardown", *, "marks": [[][]]*',
+        '---> record: *, "when": "setup", *, "labels": [[][]], "tags": {}*',
+        '---> record: *, "when": "call", *, "labels": [[][]], "tags": {}*',
+        '---> record: *, "when": "teardown", *, "labels": [[][]], "tags": {}*',
     ]
     result.stdout.fnmatch_lines(expected_lines)

@@ -17,11 +17,18 @@ def pytest_configure(config):
 def pytest_runtest_setup(item):
     if item.config.getoption("--instrument") is True:
         try:
-            instrument_marks = [_.args for _ in item.iter_markers("instrument")][0]
+            labels = [_.args for _ in item.iter_markers("instrument")][0]
         except IndexError:
-            instrument_marks = ()
+            labels = ()
 
-        item.user_properties.append(("instrument", instrument_marks))
+        try:
+            tags = [_.kwargs for _ in item.iter_markers("instrument")][0]
+        except IndexError:
+            tags = {}
+
+        labels_and_tags = {"labels": labels, "tags": tags}
+
+        item.user_properties.append(("instrument", labels_and_tags))
 
 
 def pytest_runtest_makereport(item, call):
@@ -33,11 +40,11 @@ def pytest_runtest_makereport(item, call):
 
 def pytest_report_teststatus(report, config):
     if config.getoption("--instrument") is True:
-        marks = ()
+        labels_and_tags = {}
         for prop in (
             prop for prop in report.user_properties if prop[0] == "instrument"
         ):
-            marks = prop[1]
+            labels_and_tags = prop[1]
 
         timestamps = {}
         for prop in (prop for prop in report.user_properties if prop[0] == report.when):
@@ -50,7 +57,8 @@ def pytest_report_teststatus(report, config):
             "start": timestamps["start"],
             "stop": timestamps["stop"],
             "duration": report.duration,
-            "marks": marks,
+            "labels": labels_and_tags.get("labels", None),
+            "tags": labels_and_tags.get("tags", None),
         }
 
         print(f"\n---> record: {json.dumps(record)}")
