@@ -38,10 +38,11 @@ def pytest_runtest_setup(item):
         item.config.hook.pytest_instrument_tags(config=item.config, tags=tags)
 
         labels_and_tags = {"labels": labels, "tags": tags}
-
         item.user_properties.append(("instrument", labels_and_tags))
 
-        item.user_properties.append(("fixtures", item.fixturenames))
+        fixtures = item.fixturenames.copy()
+        item.config.hook.pytest_instrument_fixtures(fixtures=fixtures)
+        item.user_properties.append(("fixtures", fixtures))
 
 
 def pytest_runtest_makereport(item, call):

@@ -84,3 +84,18 @@ def test_tag_hook_adds_tag(testdir):
         f'---> record: *, "when": "teardown", *, "tags": {{"my_mark": "a_mark", "{tag_key}": "{tag_value}"}}*',
     ]
     result.stdout.fnmatch_lines(expected_lines)
+
+
+def test_fixture_hook_removes_fixture(testdir):
+    tests_folder = "fixture_hook"
+    tests_filename = "test_fixture_hook.py"
+    test_to_run = "test_using_fixture"
+
+    testdir.copy_example(tests_folder)
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+    )
+    result.assert_outcomes(passed=1)
+
+    expected_lines = ['---> record: *, "fixtures": [[][]]*']
+    result.stdout.fnmatch_lines(expected_lines)

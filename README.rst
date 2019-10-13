@@ -36,6 +36,11 @@ There are also two hook functions to manipulate labels and tags after they have 
 - `pytest_instrument_labels`
 - `pytest_instrument_tags`
 
+Fixtures
+~~~~~~~~
+In case you want to filter out a fixture, e.g. because every test uses it by default, you can use the
+`pytest_instrument_fixtures()` hook function.
+
 
 Requirements
 ------------
