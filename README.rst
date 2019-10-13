@@ -1,6 +1,6 @@
-==============
+=================
 pytest-instrument
-==============
+=================
 
 .. image:: https://img.shields.io/pypi/v/pytest-instrument.svg
     :target: https://pypi.org/project/pytest-instrument
@@ -30,6 +30,11 @@ Features
 Labels and tags
 ~~~~~~~~~~~~~~~
 You can add labels and tags with `@pytest.mark.instrument()`. `args` become labels; `kwargs` become tags.
+
+There are also two hook functions to manipulate labels and tags after they have been set:
+
+- `pytest_instrument_labels`
+- `pytest_instrument_tags`
 
 
 Requirements
