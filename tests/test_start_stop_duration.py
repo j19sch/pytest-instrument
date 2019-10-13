@@ -15,7 +15,7 @@ def test_record_start(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(f'---> record: *, "start": *')
+    result.stdout.fnmatch_lines('---> record: *, "start": *')
 
 
 def test_record_stop(testdir, tests_filename):
@@ -25,7 +25,7 @@ def test_record_stop(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(f'---> record: *, "stop": *')
+    result.stdout.fnmatch_lines('---> record: *, "stop": *')
 
 
 def test_record_duration(testdir, tests_filename):
@@ -35,4 +35,4 @@ def test_record_duration(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(f'---> record: *, "duration": *')
+    result.stdout.fnmatch_lines('---> record: *, "duration": *')

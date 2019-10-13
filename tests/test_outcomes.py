@@ -15,7 +15,7 @@ def test_result_call_passes(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(f'---> record: *, "when": "call", "outcome": "passed"*')
+    result.stdout.fnmatch_lines('---> record: *, "when": "call", "outcome": "passed"*')
 
 
 def test_result_call_fails(testdir, tests_filename):
@@ -25,7 +25,7 @@ def test_result_call_fails(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=1, passed=0)
 
-    result.stdout.fnmatch_lines(f'---> record: *, "when": "call", "outcome": "failed"*')
+    result.stdout.fnmatch_lines('---> record: *, "when": "call", "outcome": "failed"*')
 
 
 def test_result_setup_passes(testdir, tests_filename):
@@ -36,7 +36,7 @@ def test_result_setup_passes(testdir, tests_filename):
     result.assert_outcomes(error=0, failed=0, passed=1)
 
     result.stdout.fnmatch_lines(
-        f'---> record: *, "when": "setup", "outcome": "passed"*'
+        '---> record: *, "when": "setup", "outcome": "passed"*'
     )
 
 
@@ -48,7 +48,7 @@ def test_result_setup_fails(testdir, tests_filename):
     result.assert_outcomes(error=1, failed=0, passed=0)
 
     result.stdout.fnmatch_lines(
-        f'---> record: *, "when": "setup", "outcome": "failed"*'
+        '---> record: *, "when": "setup", "outcome": "failed"*'
     )
 
 
@@ -60,7 +60,7 @@ def test_result_teardown_passes(testdir, tests_filename):
     result.assert_outcomes(error=0, failed=0, passed=1)
 
     result.stdout.fnmatch_lines(
-        f'---> record: *, "when": "teardown", "outcome": "passed"*'
+        '---> record: *, "when": "teardown", "outcome": "passed"*'
     )
 
 
@@ -72,7 +72,7 @@ def test_result_teardown_fails(testdir, tests_filename):
     result.assert_outcomes(error=1, failed=0, passed=1)
 
     result.stdout.fnmatch_lines(
-        f'---> record: *, "when": "teardown", "outcome": "failed"*'
+        '---> record: *, "when": "teardown", "outcome": "failed"*'
     )
 
 
@@ -84,8 +84,8 @@ def test_result_setup_and_teardown_fail(testdir, tests_filename):
     result.assert_outcomes(error=1, failed=0, passed=0)
 
     expected_lines = [
-        f'---> record: *, "when": "setup", "outcome": "failed"*',
-        f'---> record: *, "when": "teardown", "outcome": "passed"*',
+        '---> record: *, "when": "setup", "outcome": "failed"*',
+        '---> record: *, "when": "teardown", "outcome": "passed"*',
     ]
 
     result.stdout.fnmatch_lines(expected_lines)
@@ -99,8 +99,8 @@ def test_result_skipped(testdir, tests_filename):
     result.assert_outcomes(error=0, failed=0, passed=0, skipped=1)
 
     expected_lines = [
-        f'---> record: *, "when": "setup", "outcome": "skipped"*',
-        f'---> record: *, "when": "teardown", "outcome": "passed"*',
+        '---> record: *, "when": "setup", "outcome": "skipped"*',
+        '---> record: *, "when": "teardown", "outcome": "passed"*',
     ]
 
     result.stdout.fnmatch_lines(expected_lines)
