@@ -30,6 +30,8 @@ def pytest_runtest_setup(item):
 
         item.user_properties.append(("instrument", labels_and_tags))
 
+        item.user_properties.append(("fixtures", item.fixturenames))
+
 
 def pytest_runtest_makereport(item, call):
     if item.config.getoption("--instrument") is True:
@@ -50,6 +52,10 @@ def pytest_report_teststatus(report, config):
         for prop in (prop for prop in report.user_properties if prop[0] == report.when):
             timestamps = prop[1]
 
+        fixtures = []
+        for prop in (prop for prop in report.user_properties if prop[0] == "fixtures"):
+            fixtures = prop[1]
+
         record = {
             "node_id": report.nodeid,
             "when": report.when,
@@ -59,6 +65,7 @@ def pytest_report_teststatus(report, config):
             "duration": report.duration,
             "labels": labels_and_tags.get("labels", None),
             "tags": labels_and_tags.get("tags", None),
+            "fixtures": fixtures,
         }
 
         print(f"\n---> record: {json.dumps(record)}")

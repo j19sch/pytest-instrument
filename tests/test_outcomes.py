@@ -35,9 +35,7 @@ def test_result_setup_passes(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(
-        '---> record: *, "when": "setup", "outcome": "passed"*'
-    )
+    result.stdout.fnmatch_lines('---> record: *, "when": "setup", "outcome": "passed"*')
 
 
 def test_result_setup_fails(testdir, tests_filename):
@@ -47,9 +45,7 @@ def test_result_setup_fails(testdir, tests_filename):
     )
     result.assert_outcomes(error=1, failed=0, passed=0)
 
-    result.stdout.fnmatch_lines(
-        '---> record: *, "when": "setup", "outcome": "failed"*'
-    )
+    result.stdout.fnmatch_lines('---> record: *, "when": "setup", "outcome": "failed"*')
 
 
 def test_result_teardown_passes(testdir, tests_filename):
