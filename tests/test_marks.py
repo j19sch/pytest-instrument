@@ -9,7 +9,7 @@ def tests_filename(testdir):
 
 
 def test_mark_test(testdir, tests_filename):
-    result = testdir.runpytest("-vs", f"{tests_filename}::test_mark")
+    result = testdir.runpytest("-vs", "--instrument", f"{tests_filename}::test_mark")
     result.assert_outcomes(passed=1)
 
     expected_lines = [
@@ -21,7 +21,9 @@ def test_mark_test(testdir, tests_filename):
 
 
 def test_multiple_mark_test(testdir, tests_filename):
-    result = testdir.runpytest("-vs", f"{tests_filename}::test_multiple_marks")
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::test_multiple_marks"
+    )
     result.assert_outcomes(passed=1)
 
     expected_lines = [
@@ -33,7 +35,9 @@ def test_multiple_mark_test(testdir, tests_filename):
 
 
 def test_without_mark_test(testdir, tests_filename):
-    result = testdir.runpytest("-vs", f"{tests_filename}::test_without_mark")
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::test_without_mark"
+    )
     result.assert_outcomes(passed=1)
 
     expected_lines = [

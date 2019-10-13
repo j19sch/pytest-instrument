@@ -10,7 +10,9 @@ def tests_filename(testdir):
 
 def test_record_start(testdir, tests_filename):
     test_to_run = "test_passes"
-    result = testdir.runpytest("-vs", f"{tests_filename}::{test_to_run}")
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+    )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
     result.stdout.fnmatch_lines(f'---> record: *, "start": *')
@@ -18,7 +20,9 @@ def test_record_start(testdir, tests_filename):
 
 def test_record_stop(testdir, tests_filename):
     test_to_run = "test_passes"
-    result = testdir.runpytest("-vs", f"{tests_filename}::{test_to_run}")
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+    )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
     result.stdout.fnmatch_lines(f'---> record: *, "stop": *')
@@ -26,7 +30,9 @@ def test_record_stop(testdir, tests_filename):
 
 def test_record_duration(testdir, tests_filename):
     test_to_run = "test_passes"
-    result = testdir.runpytest("-vs", f"{tests_filename}::{test_to_run}")
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+    )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
     result.stdout.fnmatch_lines(f'---> record: *, "duration": *')

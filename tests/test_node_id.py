@@ -10,7 +10,9 @@ def tests_filename(testdir):
 
 def test_file_test(testdir, tests_filename):
     test_to_run = "test_passes"
-    result = testdir.runpytest("-vs", f"{tests_filename}::{test_to_run}")
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+    )
     result.assert_outcomes(passed=1)
 
     expected_lines = [
@@ -25,7 +27,7 @@ def test_file_class_test(testdir, tests_filename):
     class_to_run = "TestClass"
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", f"{tests_filename}::{class_to_run}::{test_to_run}"
+        "-vs", "--instrument", f"{tests_filename}::{class_to_run}::{test_to_run}"
     )
     result.assert_outcomes(passed=1)
 
@@ -42,7 +44,9 @@ def test_folder_file_test(testdir):
     tests_filename = "test_suite_structures_subdir.py"
     test_to_run = "test_passes_in_subdir"
     testdir.copy_example(".")
-    result = testdir.runpytest("-vs", f"{tests_folder}/{tests_filename}::{test_to_run}")
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_folder}/{tests_filename}::{test_to_run}"
+    )
     result.assert_outcomes(passed=1)
 
     expected_lines = [
