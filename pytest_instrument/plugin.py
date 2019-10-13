@@ -14,17 +14,28 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
 
+def pytest_addhooks(pluginmanager):
+    """ This example assumes the hooks are grouped in the 'hooks' module. """
+    from pytest_instrument import hooks
+
+    pluginmanager.add_hookspecs(hooks)
+
+
 def pytest_runtest_setup(item):
     if item.config.getoption("--instrument") is True:
         try:
-            labels = [_.args for _ in item.iter_markers("instrument")][0]
+            labels = list([_.args for _ in item.iter_markers("instrument")][0])
         except IndexError:
-            labels = ()
+            labels = []
+
+        item.config.hook.pytest_instrument_labels(config=item.config, labels=labels)
 
         try:
             tags = [_.kwargs for _ in item.iter_markers("instrument")][0]
         except IndexError:
             tags = {}
+
+        item.config.hook.pytest_instrument_tags(config=item.config, tags=tags)
 
         labels_and_tags = {"labels": labels, "tags": tags}
 
