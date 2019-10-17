@@ -54,7 +54,7 @@ jobs:
 
   pypy3:
     docker:
-      -image: pypy:3
+      - image: pypy:3
     working_directory: ~/repo
     steps:
       - checkout
