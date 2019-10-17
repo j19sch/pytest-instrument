@@ -14,6 +14,10 @@ pytest-instrument
     :target: https://circleci.com/gh/j19sch/pytest-instrument/tree/master
     :alt: See Build Status on Circle CI
 
+.. image:: https://img.shields.io/github/license/mashape/apistatus.svg
+    :target: https://github.com/j19sch/pytest-logfest/blob/master/LICENSE
+    :alt: MIT license
+
 pytest plugin to instrument tests
 
 ----
