@@ -62,7 +62,7 @@ jobs:
           name: install dependencies
           command: |
             sudo apt install software-properties-common
-            sudo add-apt-repository ppa:pypy/ppa
+            sudo add-apt-repository ppa:pypy/ppa -y
             sudo apt update
             sudo apt install -y pypy3
             sudo pip install tox
