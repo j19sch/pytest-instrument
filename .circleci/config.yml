@@ -54,7 +54,7 @@ jobs:
 
   pypy3:
     docker:
-      -image: pypy/pypy:3
+      -image: pypy:3
     working_directory: ~/repo
     steps:
       - checkout
@@ -103,5 +103,6 @@ workflows:
       - python36
       - python37
       - python38
+      -  pypy3
       - flake8
       - black
