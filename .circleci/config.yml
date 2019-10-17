@@ -52,6 +52,21 @@ jobs:
           command: |
             tox -e py38
 
+  pypy3:
+    docker:
+      -image: pypy/pypy:3
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            sudo pip install tox
+      - run:
+          name: run tests
+          command: |
+            tox -e pypy3
+
   flake8:
     docker:
       - image: circleci/python:3.7
