@@ -52,25 +52,6 @@ jobs:
           command: |
             tox -e py38
 
-  pypy3:
-    docker:
-      - image: circleci/python:3.7
-    working_directory: ~/repo
-    steps:
-      - checkout
-      - run:
-          name: install dependencies
-          command: |
-            sudo apt install software-properties-common
-            sudo add-apt-repository ppa:pypy/ppa -y
-            sudo apt update
-            sudo apt install -y pypy3
-            sudo pip install tox
-      - run:
-          name: run tests
-          command: |
-            tox -e pypy3
-
   flake8:
     docker:
       - image: circleci/python:3.7
@@ -107,6 +88,5 @@ workflows:
       - python36
       - python37
       - python38
-      - pypy3
       - flake8
       - black
