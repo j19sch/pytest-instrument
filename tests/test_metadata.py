@@ -19,13 +19,17 @@ def test_record_id(testdir, tests_filename):
     uuid4_regex = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
     result.stdout.re_match_lines(f'.*"record_id": "{uuid4_regex}",.*')
 
+    pattern = re.compile(f'.*"record_id": "({uuid4_regex})",.*')
+    record_ids = pattern.findall(result.stdout.str())
+
+    assert len(record_ids) == len(set(record_ids))
+
 
 def test_session_id(testdir, tests_filename):
-    test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument", f"{tests_filename}", "-k in_session"
     )
-    result.assert_outcomes(error=0, failed=0, passed=1)
+    result.assert_outcomes(error=0, failed=0, passed=2)
 
     uuid4_regex = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
     result.stdout.re_match_lines(f'.*"session_id": "{uuid4_regex}",.*')
