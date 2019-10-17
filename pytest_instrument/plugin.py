@@ -14,9 +14,12 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
+    # ToDo: make it an attribute of session instead of config
+    setattr(config, "_instrument", {})
+    config.instrument = {"session_id": str(uuid.uuid4())}
+
 
 def pytest_addhooks(pluginmanager):
-    """ This example assumes the hooks are grouped in the 'hooks' module. """
     from pytest_instrument import hooks
 
     pluginmanager.add_hookspecs(hooks)
@@ -70,6 +73,7 @@ def pytest_report_teststatus(report, config):
             fixtures = prop[1]
 
         record = {
+            "session_id": config.instrument["session_id"],
             "record_id": str(uuid.uuid4()),
             "node_id": report.nodeid,
             "when": report.when,
