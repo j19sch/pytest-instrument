@@ -37,6 +37,21 @@ jobs:
           command: |
             tox -e py37
 
+  python38:
+    docker:
+      - image: circleci/python:3.8
+    working_directory: ~/repo
+    steps:
+      - checkout
+      - run:
+          name: install dependencies
+          command: |
+            sudo pip install tox
+      - run:
+          name: run tests
+          command: |
+            tox -e py38
+
   flake8:
     docker:
       - image: circleci/python:3.7
@@ -72,5 +87,6 @@ workflows:
     jobs:
       - python36
       - python37
+      - python38
       - flake8
       - black
