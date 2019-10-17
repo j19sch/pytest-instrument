@@ -1,3 +1,5 @@
+import csv
+import os
 import json
 import uuid
 
@@ -14,9 +16,48 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
-    # ToDo: make it an attribute of session instead of config
-    setattr(config, "_instrument", {})
-    config.instrument = {"session_id": str(uuid.uuid4())}
+    if config.getoption("--instrument") is True:
+        session_id = str(uuid.uuid4())
+
+        try:
+            os.mkdir("./artifacts", mode=0o777)
+        except FileExistsError:
+            pass
+        output_file = open(f"./artifacts/{session_id}.csv", "a")
+        fieldnames = [
+            "session_id",
+            "record_id",
+            "node_id",
+            "when",
+            "outcome",
+            "start",
+            "stop",
+            "duration",
+            "labels",
+            "tags",
+            "fixtures",
+        ]
+        writer = csv.DictWriter(output_file, fieldnames=fieldnames)
+        writer.writeheader()
+
+        config.instrument = {
+            "session_id": session_id,
+            "csv_writer": writer,
+            "output_file": output_file,
+        }
+
+
+def pytest_unconfigure(config):
+    if config.getoption("--instrument") is True:
+        output_file = config.instrument["output_file"]
+        output_file.close()
+
+        session_id = config.instrument["session_id"]
+        with open(f"./artifacts/{session_id}.csv", "r") as input_csv, open(
+            f"./artifacts/{session_id}.json", "w"
+        ) as output_json:
+            reader = csv.DictReader(input_csv)
+            json.dump([row for row in reader], output_json)
 
 
 def pytest_addhooks(pluginmanager):
@@ -87,3 +128,5 @@ def pytest_report_teststatus(report, config):
         }
 
         print(f"\n---> record: {json.dumps(record)}")
+        writer = config.instrument["csv_writer"]
+        writer.writerow(record)
