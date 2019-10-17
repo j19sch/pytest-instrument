@@ -61,6 +61,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
+            sudo apt install software-properties-common
             sudo add-apt-repository ppa:pypy/ppa
             sudo apt update
             sudo apt install -y pypy3
