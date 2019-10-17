@@ -61,7 +61,7 @@ jobs:
       - run:
           name: install dependencies
           command: |
-            sudo pip install tox
+            pip install --user tox
       - run:
           name: run tests
           command: |
@@ -103,6 +103,6 @@ workflows:
       - python36
       - python37
       - python38
-      -  pypy3
+      - pypy3
       - flake8
       - black
