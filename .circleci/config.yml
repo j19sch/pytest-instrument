@@ -54,14 +54,17 @@ jobs:
 
   pypy3:
     docker:
-      - image: pypy:3
+      - image: circleci/python:3.7
     working_directory: ~/repo
     steps:
       - checkout
       - run:
           name: install dependencies
           command: |
-            pip install --user tox
+            sudo add-apt-repository ppa:pypy/ppa
+            sudo apt update
+            sudo apt install -y pypy3
+            sudo pip install tox
       - run:
           name: run tests
           command: |
