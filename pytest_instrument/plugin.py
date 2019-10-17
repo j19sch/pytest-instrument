@@ -1,4 +1,5 @@
 import json
+import uuid
 
 
 def pytest_addoption(parser):
@@ -69,6 +70,7 @@ def pytest_report_teststatus(report, config):
             fixtures = prop[1]
 
         record = {
+            "record_id": str(uuid.uuid4()),
             "node_id": report.nodeid,
             "when": report.when,
             "outcome": report.outcome,
