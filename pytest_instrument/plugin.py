@@ -52,13 +52,6 @@ def pytest_unconfigure(config):
         output_file = config.instrument["output_file"]
         output_file.close()
 
-        session_id = config.instrument["session_id"]
-        with open(f"./artifacts/{session_id}.csv", "r") as input_csv, open(
-            f"./artifacts/{session_id}.json", "w"
-        ) as output_json:
-            reader = csv.DictReader(input_csv)
-            json.dump([row for row in reader], output_json)
-
 
 def pytest_addhooks(pluginmanager):
     from pytest_instrument import hooks

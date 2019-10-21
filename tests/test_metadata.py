@@ -1,5 +1,4 @@
 import csv
-import json
 import pytest
 import re
 from uuid import UUID
@@ -30,17 +29,6 @@ def test_record_id(testdir, tests_filename):
     assert len(record_ids) == len(set(record_ids))
 
     artifacts_dir = testdir.tmpdir.join("artifacts")
-    json_files = tests.helpers.get_files_in_testdir_by_extension(artifacts_dir, "json")
-    assert len(json_files) == 1
-
-    with open(artifacts_dir.join(json_files[0])) as json_file:
-        json_data = json.load(json_file)
-    for record in json_data:
-        try:
-            UUID(record["record_id"], version=4)
-        except (AttributeError, ValueError):
-            assert False, f"Record id {record['record_id']} is not a valid v4 UUID."
-
     csv_files = tests.helpers.get_files_in_testdir_by_extension(artifacts_dir, "csv")
     assert len(csv_files) == 1
 
@@ -53,9 +41,6 @@ def test_record_id(testdir, tests_filename):
             except (AttributeError, ValueError):
                 assert False, f"Record id {record['record_id']} is not a valid v4 UUID."
             csv_data.append(dict(record))
-
-    assert len(json_data) == len(list(csv_data))
-    assert json_data == csv_data
 
 
 def test_session_id(testdir, tests_filename):
