@@ -25,6 +25,7 @@ setup(
     packages=["pytest_instrument"],
     python_requires=">=3.5",
     install_requires=["pytest>=5.1.0"],
+    tests_require=["jsonschema>=3.1.1"],
     classifiers=[
         "Development Status :: 4 - Beta",
         "Framework :: Pytest",

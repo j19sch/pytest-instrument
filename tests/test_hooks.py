@@ -1,3 +1,6 @@
+from tests import helpers
+
+
 def test_label_hook_sets_first_label(testdir):
     tests_folder = "label_hook"
     tests_filename = "test_label_hook.py"
@@ -10,12 +13,11 @@ def test_label_hook_sets_first_label(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        f'---> record: *, "when": "setup", *, "labels": [[]"{label}"[]]*',
-        f'---> record: *, "when": "call", *, "labels": [[]"{label}"[]]*',
-        f'---> record: *, "when": "teardown", *, "labels": [[]"{label}"[]]*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    expected_labels = [label]
+    assert len(
+        [record for record in records if record["labels"] == expected_labels]
+    ) == len(records)
 
 
 def test_label_hook_adds_label(testdir):
@@ -30,12 +32,11 @@ def test_label_hook_adds_label(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        f'---> record: *, "when": "setup", *, "labels": [[]"a_mark", "{label}"[]]*',
-        f'---> record: *, "when": "call", *, "labels": [[]"a_mark", "{label}"[]]*',
-        f'---> record: *, "when": "teardown", *, "labels": [[]"a_mark", "{label}"[]]*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    expected_labels = ["a_mark", label]
+    assert len(
+        [record for record in records if record["labels"] == expected_labels]
+    ) == len(records)
 
 
 def test_tag_hook_sets_first_tag(testdir):
@@ -54,12 +55,11 @@ def test_tag_hook_sets_first_tag(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        f'---> record: *, "when": "setup", *, "tags": {{"{tag_key}": "{tag_value}"}}*',
-        f'---> record: *, "when": "call", *, "tags": {{"{tag_key}": "{tag_value}"}}*',
-        f'---> record: *, "when": "teardown", *, "tags": {{"{tag_key}": "{tag_value}"}}*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    expected_tags = {tag_key: tag_value}
+    assert len(
+        [record for record in records if record["tags"] == expected_tags]
+    ) == len(records)
 
 
 def test_tag_hook_adds_tag(testdir):
@@ -78,12 +78,13 @@ def test_tag_hook_adds_tag(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        f'---> record: *, "when": "setup", *, "tags": {{"my_mark": "a_mark", "{tag_key}": "{tag_value}"}}*',
-        f'---> record: *, "when": "call", *, "tags": {{"my_mark": "a_mark", "{tag_key}": "{tag_value}"}}*',
-        f'---> record: *, "when": "teardown", *, "tags": {{"my_mark": "a_mark", "{tag_key}": "{tag_value}"}}*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_tags = {"my_mark": "a_mark", tag_key: tag_value}
+    assert len(
+        [record for record in records if record["tags"] == expected_tags]
+    ) == len(records)
 
 
 def test_fixture_hook_removes_fixture(testdir):
@@ -97,5 +98,9 @@ def test_fixture_hook_removes_fixture(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = ['---> record: *, "fixtures": [[][]]*']
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    assert len([record for record in records if record["fixtures"] is None]) == len(
+        records
+    )

@@ -1,4 +1,6 @@
 import json
+import os
+import pickle
 import uuid
 
 
@@ -14,9 +16,38 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
-    # ToDo: make it an attribute of session instead of config
-    setattr(config, "_instrument", {})
-    config.instrument = {"session_id": str(uuid.uuid4())}
+    if config.getoption("--instrument") is True:
+        session_id = str(uuid.uuid4())
+
+        try:
+            os.mkdir("./artifacts", mode=0o777)
+        except FileExistsError:
+            pass
+        output_writer = open(f"./artifacts/{session_id}.pickle", "ab")
+
+        config.instrument = {"session_id": session_id, "output_writer": output_writer}
+
+
+def pytest_unconfigure(config):
+    if config.getoption("--instrument") is True:
+        output_writer = config.instrument["output_writer"]
+        output_writer.close()
+
+        artifacts_folder = "artifacts"
+        session_id = config.instrument["session_id"]
+
+        data = []
+        with open(f"./{artifacts_folder}/{session_id}.pickle", "rb") as pickle_file:
+            try:
+                while True:
+                    data.append(pickle.load(pickle_file))
+            except EOFError:
+                pass
+
+        with open(f"./{artifacts_folder}/{session_id}.json", "w") as json_file:
+            json.dump(data, json_file)
+
+        os.remove(f"./{artifacts_folder}/{session_id}.pickle")
 
 
 def pytest_addhooks(pluginmanager):
@@ -41,11 +72,14 @@ def pytest_runtest_setup(item):
 
         item.config.hook.pytest_instrument_tags(config=item.config, tags=tags)
 
+        labels = None if not labels else labels
+        tags = None if not tags else tags
         labels_and_tags = {"labels": labels, "tags": tags}
         item.user_properties.append(("instrument", labels_and_tags))
 
         fixtures = item.fixturenames.copy()
         item.config.hook.pytest_instrument_fixtures(fixtures=fixtures)
+        fixtures = None if not fixtures else fixtures
         item.user_properties.append(("fixtures", fixtures))
 
 
@@ -80,10 +114,10 @@ def pytest_report_teststatus(report, config):
             "outcome": report.outcome,
             "start": str(timestamps["start"]),
             "stop": str(timestamps["stop"]),
-            "duration": str(report.duration),
+            "duration": f"{report.duration:.12f}",
             "labels": labels_and_tags.get("labels", None),
             "tags": labels_and_tags.get("tags", None),
             "fixtures": fixtures,
         }
 
-        print(f"\n---> record: {json.dumps(record)}")
+        pickle.dump(record, config.instrument["output_writer"])

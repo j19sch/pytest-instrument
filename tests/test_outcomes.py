@@ -1,5 +1,7 @@
 import pytest
 
+from tests import helpers
+
 
 @pytest.fixture(scope="function")
 def tests_filename(testdir):
@@ -15,7 +17,22 @@ def test_result_call_passes(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines('---> record: *, "when": "call", "outcome": "passed"*')
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_when = "call"
+    expected_outcome = "passed"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
+    )
 
 
 def test_result_call_fails(testdir, tests_filename):
@@ -25,7 +42,22 @@ def test_result_call_fails(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=1, passed=0)
 
-    result.stdout.fnmatch_lines('---> record: *, "when": "call", "outcome": "failed"*')
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_when = "call"
+    expected_outcome = "failed"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
+    )
 
 
 def test_result_setup_passes(testdir, tests_filename):
@@ -35,7 +67,22 @@ def test_result_setup_passes(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines('---> record: *, "when": "setup", "outcome": "passed"*')
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_when = "setup"
+    expected_outcome = "passed"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
+    )
 
 
 def test_result_setup_fails(testdir, tests_filename):
@@ -45,7 +92,22 @@ def test_result_setup_fails(testdir, tests_filename):
     )
     result.assert_outcomes(error=1, failed=0, passed=0)
 
-    result.stdout.fnmatch_lines('---> record: *, "when": "setup", "outcome": "failed"*')
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_when = "setup"
+    expected_outcome = "failed"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
+    )
 
 
 def test_result_teardown_passes(testdir, tests_filename):
@@ -55,8 +117,21 @@ def test_result_teardown_passes(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(
-        '---> record: *, "when": "teardown", "outcome": "passed"*'
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_when = "teardown"
+    expected_outcome = "passed"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
     )
 
 
@@ -67,8 +142,21 @@ def test_result_teardown_fails(testdir, tests_filename):
     )
     result.assert_outcomes(error=1, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(
-        '---> record: *, "when": "teardown", "outcome": "failed"*'
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_when = "teardown"
+    expected_outcome = "failed"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
     )
 
 
@@ -79,12 +167,39 @@ def test_result_setup_and_teardown_fail(testdir, tests_filename):
     )
     result.assert_outcomes(error=1, failed=0, passed=0)
 
-    expected_lines = [
-        '---> record: *, "when": "setup", "outcome": "failed"*',
-        '---> record: *, "when": "teardown", "outcome": "passed"*',
-    ]
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
 
-    result.stdout.fnmatch_lines(expected_lines)
+    expected_when = "setup"
+    expected_outcome = "failed"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
+    )
+
+    expected_when = "call"
+    assert len([record for record in records if record["when"] == expected_when]) == 0
+
+    expected_when = "teardown"
+    expected_outcome = "passed"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
+    )
 
 
 def test_result_skipped(testdir, tests_filename):
@@ -94,9 +209,36 @@ def test_result_skipped(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=0, skipped=1)
 
-    expected_lines = [
-        '---> record: *, "when": "setup", "outcome": "skipped"*',
-        '---> record: *, "when": "teardown", "outcome": "passed"*',
-    ]
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
 
-    result.stdout.fnmatch_lines(expected_lines)
+    expected_when = "setup"
+    expected_outcome = "skipped"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
+    )
+
+    expected_when = "call"
+    assert len([record for record in records if record["when"] == expected_when]) == 0
+
+    expected_when = "teardown"
+    expected_outcome = "passed"
+    assert (
+        len(
+            [
+                record
+                for record in records
+                if record["when"] == expected_when
+                and record["outcome"] == expected_outcome
+            ]
+        )
+        == 1
+    )

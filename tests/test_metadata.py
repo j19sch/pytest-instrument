@@ -1,5 +1,7 @@
 import pytest
-import re
+from uuid import UUID
+
+from tests import helpers
 
 
 @pytest.fixture(scope="function")
@@ -16,12 +18,16 @@ def test_record_id(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    uuid4_regex = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
-    result.stdout.re_match_lines(f'.*"record_id": "{uuid4_regex}",.*')
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
 
-    pattern = re.compile(f'.*"record_id": "({uuid4_regex})",.*')
-    record_ids = pattern.findall(result.stdout.str())
+    for record in records:
+        try:
+            UUID(record["record_id"], version=4)
+        except (AttributeError, ValueError):
+            assert False, f"Record id {record['record_id']} is not a valid v4 UUID."
 
+    record_ids = [_["record_id"] for _ in records]
     assert len(record_ids) == len(set(record_ids))
 
 
@@ -31,11 +37,14 @@ def test_session_id(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=2)
 
-    uuid4_regex = "[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}"
-    result.stdout.re_match_lines(f'.*"session_id": "{uuid4_regex}",.*')
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
 
-    pattern = re.compile(f'.*"session_id": "({uuid4_regex})",.*')
-    session_id = pattern.search(result.stdout.str()).group(1)
+    for record in records:
+        try:
+            UUID(record["session_id"], version=4)
+        except (AttributeError, ValueError):
+            assert False, f"Session id {record['session_id']} is not a valid v4 UUID."
 
-    for line in [line for line in result.outlines if "---> record" in line]:
-        assert f'"session_id": "{session_id}"' in line
+    session_ids = [_["session_id"] for _ in records]
+    assert len(set(session_ids)) == 1

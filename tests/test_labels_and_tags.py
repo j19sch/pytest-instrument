@@ -1,5 +1,7 @@
 import pytest
 
+from tests import helpers
+
 
 @pytest.fixture(scope="function")
 def tests_filename(testdir):
@@ -14,12 +16,13 @@ def test_single_arg_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        '---> record: *, "when": "setup", *, "labels": [[]"a_mark"[]]*',
-        '---> record: *, "when": "call", *, "labels": [[]"a_mark"[]]*',
-        '---> record: *, "when": "teardown", *, "labels": [[]"a_mark"[]]*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_labels = ["a_mark"]
+    assert len(
+        [record for record in records if record["labels"] == expected_labels]
+    ) == len(records)
 
 
 def test_single_kwarg_in_mark_instrument(testdir, tests_filename):
@@ -28,12 +31,13 @@ def test_single_kwarg_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        '---> record: *, "when": "setup", *, "tags": {"my_mark": "a_mark"}*',
-        '---> record: *, "when": "call", *, "tags": {"my_mark": "a_mark"}*',
-        '---> record: *, "when": "teardown", *, "tags": {"my_mark": "a_mark"}*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_tags = {"my_mark": "a_mark"}
+    assert len(
+        [record for record in records if record["tags"] == expected_tags]
+    ) == len(records)
 
 
 def test_multiple_args_in_mark_instrument(testdir, tests_filename):
@@ -42,12 +46,13 @@ def test_multiple_args_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        '---> record: *, "when": "setup", *, "labels": [[]"a_mark", "another_mark"[]]*',
-        '---> record: *, "when": "call", *, "labels": [[]"a_mark", "another_mark"[]]*',
-        '---> record: *, "when": "teardown", *, "labels": [[]"a_mark", "another_mark"[]]*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_labels = ["a_mark", "another_mark"]
+    assert len(
+        [record for record in records if record["labels"] == expected_labels]
+    ) == len(records)
 
 
 def test_multiple_kwargs_in_mark_instrument(testdir, tests_filename):
@@ -56,12 +61,13 @@ def test_multiple_kwargs_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        '---> record: *, "when": "setup", *, "tags": {"my_mark": "a_mark", "my_other_mark": "another_mark"}*',
-        '---> record: *, "when": "call", *, "tags": {"my_mark": "a_mark", "my_other_mark": "another_mark"}*',
-        '---> record: *, "when": "teardown", *, "tags": {"my_mark": "a_mark", "my_other_mark": "another_mark"}*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_tags = {"my_mark": "a_mark", "my_other_mark": "another_mark"}
+    assert len(
+        [record for record in records if record["tags"] == expected_tags]
+    ) == len(records)
 
 
 def test_with_single_arg_and_single_kwarg_in_mark_instrument(testdir, tests_filename):
@@ -70,12 +76,18 @@ def test_with_single_arg_and_single_kwarg_in_mark_instrument(testdir, tests_file
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        '---> record: *, "when": "setup", *, "labels": [[]"a_mark"[]], "tags": {"my_mark": "a_mark"}*',
-        '---> record: *, "when": "call", *, "labels": [[]"a_mark"[]], "tags": {"my_mark": "a_mark"}*',
-        '---> record: *, "when": "teardown", *, "labels": [[]"a_mark"[]], "tags": {"my_mark": "a_mark"}*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_labels = ["a_mark"]
+    assert len(
+        [record for record in records if record["labels"] == expected_labels]
+    ) == len(records)
+
+    expected_tags = {"my_mark": "a_mark"}
+    assert len(
+        [record for record in records if record["tags"] == expected_tags]
+    ) == len(records)
 
 
 def test_without_args_or_kwars_in_mark_instrument(testdir, tests_filename):
@@ -84,9 +96,15 @@ def test_without_args_or_kwars_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    expected_lines = [
-        '---> record: *, "when": "setup", *, "labels": [[][]], "tags": {}*',
-        '---> record: *, "when": "call", *, "labels": [[][]], "tags": {}*',
-        '---> record: *, "when": "teardown", *, "labels": [[][]], "tags": {}*',
-    ]
-    result.stdout.fnmatch_lines(expected_lines)
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    expected_labels = None
+    assert len(
+        [record for record in records if record["labels"] == expected_labels]
+    ) == len(records)
+
+    expected_tags = None
+    assert len(
+        [record for record in records if record["tags"] == expected_tags]
+    ) == len(records)
