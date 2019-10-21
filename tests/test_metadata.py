@@ -18,20 +18,20 @@ def test_record_id(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    csv_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "csv")
-    assert len(csv_files) == 1
+    json_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "json")
+    assert len(json_files) == 1
 
-    csv_records = helpers.get_records_from_csv_file_in_artifacts_dir(
-        testdir, csv_files[0]
+    records = helpers.get_records_from_json_file_in_artifacts_dir(
+        testdir, json_files[0]
     )
 
-    for record in csv_records:
+    for record in records:
         try:
             UUID(record["record_id"], version=4)
         except (AttributeError, ValueError):
             assert False, f"Record id {record['record_id']} is not a valid v4 UUID."
 
-    record_ids = [_["record_id"] for _ in csv_records]
+    record_ids = [_["record_id"] for _ in records]
     assert len(record_ids) == len(set(record_ids))
 
 
@@ -41,18 +41,18 @@ def test_session_id(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=2)
 
-    csv_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "csv")
-    assert len(csv_files) == 1
+    json_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "json")
+    assert len(json_files) == 1
 
-    csv_records = helpers.get_records_from_csv_file_in_artifacts_dir(
-        testdir, csv_files[0]
+    records = helpers.get_records_from_json_file_in_artifacts_dir(
+        testdir, json_files[0]
     )
 
-    for record in csv_records:
+    for record in records:
         try:
             UUID(record["session_id"], version=4)
         except (AttributeError, ValueError):
             assert False, f"Session id {record['session_id']} is not a valid v4 UUID."
 
-    session_ids = [_["session_id"] for _ in csv_records]
+    session_ids = [_["session_id"] for _ in records]
     assert len(set(session_ids)) == 1

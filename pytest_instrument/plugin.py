@@ -1,5 +1,5 @@
-import csv
 import os
+import pickle
 import json
 import uuid
 
@@ -23,34 +23,29 @@ def pytest_configure(config):
             os.mkdir("./artifacts", mode=0o777)
         except FileExistsError:
             pass
-        output_file = open(f"./artifacts/{session_id}.csv", "a")
-        fieldnames = [
-            "session_id",
-            "record_id",
-            "node_id",
-            "when",
-            "outcome",
-            "start",
-            "stop",
-            "duration",
-            "labels",
-            "tags",
-            "fixtures",
-        ]
-        writer = csv.DictWriter(output_file, fieldnames=fieldnames)
-        writer.writeheader()
+        output_writer = open(f"./artifacts/{session_id}.pickle", "ab")
 
-        config.instrument = {
-            "session_id": session_id,
-            "csv_writer": writer,
-            "output_file": output_file,
-        }
+        config.instrument = {"session_id": session_id, "output_writer": output_writer}
 
 
 def pytest_unconfigure(config):
     if config.getoption("--instrument") is True:
-        output_file = config.instrument["output_file"]
-        output_file.close()
+        output_writer = config.instrument["output_writer"]
+        output_writer.close()
+
+        artifacts_folder = "artifacts"
+        session_id = config.instrument["session_id"]
+
+        data = []
+        with open(f"./{artifacts_folder}/{session_id}.pickle", "rb") as pickle_file:
+            try:
+                while True:
+                    data.append(pickle.load(pickle_file))
+            except EOFError:
+                pass
+
+        with open(f"./{artifacts_folder}/{session_id}.json", "w") as json_file:
+            json.dump(data, json_file)
 
 
 def pytest_addhooks(pluginmanager):
@@ -120,6 +115,4 @@ def pytest_report_teststatus(report, config):
             "fixtures": fixtures,
         }
 
-        print(f"\n---> record: {json.dumps(record)}")
-        writer = config.instrument["csv_writer"]
-        writer.writerow(record)
+        pickle.dump(record, config.instrument["output_writer"])

@@ -1,9 +1,6 @@
 import pytest
 
-
-# setup and teardown
-# fixture scope
-# nested fixtures
+from tests import helpers
 
 
 @pytest.fixture(scope="function")
@@ -21,9 +18,11 @@ def test_setup_fixtures_with_different_scopes(testdir, tests_filename, fixture_s
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(
-        f'---> record: *, "fixtures": [[]"setup_fixture_with_{fixture_scope}_scope"[]]*'
-    )
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    expected_fixtures = [f"setup_fixture_with_{fixture_scope}_scope"]
+    assert len(
+        [record for record in records if record["fixtures"] == expected_fixtures]
+    ) == len(records)
 
 
 @pytest.mark.parametrize("fixture_scope", ["function", "module", "session"])
@@ -36,9 +35,11 @@ def test_teardown_fixtures_with_different_scopes(
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(
-        f'---> record: *, "fixtures": [[]"teardown_fixture_with_{fixture_scope}_scope"[]]*'
-    )
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    expected_fixtures = [f"teardown_fixture_with_{fixture_scope}_scope"]
+    assert len(
+        [record for record in records if record["fixtures"] == expected_fixtures]
+    ) == len(records)
 
 
 def test_multiple_fixtures(testdir, tests_filename):
@@ -48,9 +49,14 @@ def test_multiple_fixtures(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(
-        '---> record: *, "fixtures": [[]"setup_fixture_with_function_scope", "teardown_fixture_with_function_scope"[]]*'
-    )
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    expected_fixtures = [
+        "setup_fixture_with_function_scope",
+        "teardown_fixture_with_function_scope",
+    ]
+    assert len(
+        [record for record in records if record["fixtures"] == expected_fixtures]
+    ) == len(records)
 
 
 def test_without_fixtures(testdir, tests_filename):
@@ -60,7 +66,10 @@ def test_without_fixtures(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines('---> record: *, "fixtures": [[][]]*')
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    assert len([record for record in records if record["fixtures"] == []]) == len(
+        records
+    )
 
 
 def test_named_fixture(testdir, tests_filename):
@@ -70,7 +79,11 @@ def test_named_fixture(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines('---> record: *, "fixtures": [[]"named_fixture"[]]*')
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    expected_fixtures = ["named_fixture"]
+    assert len(
+        [record for record in records if record["fixtures"] == expected_fixtures]
+    ) == len(records)
 
 
 def test_child_fixture(testdir, tests_filename):
@@ -80,6 +93,8 @@ def test_child_fixture(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    result.stdout.fnmatch_lines(
-        '---> record: *, "fixtures": [[]"child_fixture", "parent_fixture"[]]*'
-    )
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    expected_fixtures = ["child_fixture", "parent_fixture"]
+    assert len(
+        [record for record in records if record["fixtures"] == expected_fixtures]
+    ) == len(records)
