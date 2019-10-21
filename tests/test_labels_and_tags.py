@@ -17,6 +17,8 @@ def test_single_arg_in_mark_instrument(testdir, tests_filename):
     result.assert_outcomes(passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
     expected_labels = ["a_mark"]
     assert len(
         [record for record in records if record["labels"] == expected_labels]
@@ -30,6 +32,8 @@ def test_single_kwarg_in_mark_instrument(testdir, tests_filename):
     result.assert_outcomes(passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
     expected_tags = {"my_mark": "a_mark"}
     assert len(
         [record for record in records if record["tags"] == expected_tags]
@@ -43,6 +47,8 @@ def test_multiple_args_in_mark_instrument(testdir, tests_filename):
     result.assert_outcomes(passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
     expected_labels = ["a_mark", "another_mark"]
     assert len(
         [record for record in records if record["labels"] == expected_labels]
@@ -56,6 +62,8 @@ def test_multiple_kwargs_in_mark_instrument(testdir, tests_filename):
     result.assert_outcomes(passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
     expected_tags = {"my_mark": "a_mark", "my_other_mark": "another_mark"}
     assert len(
         [record for record in records if record["tags"] == expected_tags]
@@ -69,6 +77,8 @@ def test_with_single_arg_and_single_kwarg_in_mark_instrument(testdir, tests_file
     result.assert_outcomes(passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
     expected_labels = ["a_mark"]
     assert len(
         [record for record in records if record["labels"] == expected_labels]
@@ -86,6 +96,8 @@ def test_without_args_or_kwars_in_mark_instrument(testdir, tests_filename):
     result.assert_outcomes(passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
     expected_labels = []
     assert len(
         [record for record in records if record["labels"] == expected_labels]

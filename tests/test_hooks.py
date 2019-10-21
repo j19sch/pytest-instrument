@@ -79,6 +79,8 @@ def test_tag_hook_adds_tag(testdir):
     result.assert_outcomes(passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
     expected_tags = {"my_mark": "a_mark", tag_key: tag_value}
     assert len(
         [record for record in records if record["tags"] == expected_tags]
@@ -97,6 +99,8 @@ def test_fixture_hook_removes_fixture(testdir):
     result.assert_outcomes(passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
     assert len([record for record in records if record["fixtures"] == []]) == len(
         records
     )

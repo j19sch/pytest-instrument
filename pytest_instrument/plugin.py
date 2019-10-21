@@ -1,6 +1,6 @@
+import json
 import os
 import pickle
-import json
 import uuid
 
 
@@ -109,7 +109,7 @@ def pytest_report_teststatus(report, config):
             "outcome": report.outcome,
             "start": str(timestamps["start"]),
             "stop": str(timestamps["stop"]),
-            "duration": str(report.duration),
+            "duration": f"{report.duration:.12f}",
             "labels": labels_and_tags.get("labels", None),
             "tags": labels_and_tags.get("tags", None),
             "fixtures": fixtures,

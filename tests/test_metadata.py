@@ -24,6 +24,7 @@ def test_record_id(testdir, tests_filename):
     records = helpers.get_records_from_json_file_in_artifacts_dir(
         testdir, json_files[0]
     )
+    helpers.validate_json(records)
 
     for record in records:
         try:
@@ -47,6 +48,7 @@ def test_session_id(testdir, tests_filename):
     records = helpers.get_records_from_json_file_in_artifacts_dir(
         testdir, json_files[0]
     )
+    helpers.validate_json(records)
 
     for record in records:
         try:

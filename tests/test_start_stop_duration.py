@@ -18,6 +18,8 @@ def test_record_start(testdir, tests_filename):
     result.assert_outcomes(error=0, failed=0, passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
     for record in records:
         assert float(record["start"]).is_integer() is False
 
@@ -30,6 +32,9 @@ def test_record_stop(testdir, tests_filename):
     result.assert_outcomes(error=0, failed=0, passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    helpers.validate_json(records)
     for record in records:
         assert float(record["stop"]).is_integer() is False
 
@@ -42,5 +47,8 @@ def test_record_duration(testdir, tests_filename):
     result.assert_outcomes(error=0, failed=0, passed=1)
 
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.validate_json(records)
+
+    helpers.validate_json(records)
     for record in records:
         assert float(record["duration"]).is_integer() is False
