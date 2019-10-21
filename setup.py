@@ -23,7 +23,7 @@ setup(
     description="pytest plugin to instrument tests",
     long_description=read("README.rst"),
     packages=["pytest_instrument"],
-    python_requires=">=3.5",
+    python_requires=">=3.6",
     install_requires=["pytest>=5.1.0"],
     tests_require=["jsonschema>=3.1.1"],
     classifiers=[
