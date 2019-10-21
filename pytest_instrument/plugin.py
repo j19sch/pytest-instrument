@@ -47,6 +47,8 @@ def pytest_unconfigure(config):
         with open(f"./{artifacts_folder}/{session_id}.json", "w") as json_file:
             json.dump(data, json_file)
 
+        os.remove(f"./{artifacts_folder}/{session_id}.pickle")
+
 
 def pytest_addhooks(pluginmanager):
     from pytest_instrument import hooks

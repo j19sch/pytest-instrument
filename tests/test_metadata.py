@@ -18,12 +18,7 @@ def test_record_id(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    json_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "json")
-    assert len(json_files) == 1
-
-    records = helpers.get_records_from_json_file_in_artifacts_dir(
-        testdir, json_files[0]
-    )
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
     helpers.validate_json(records)
 
     for record in records:
@@ -42,12 +37,7 @@ def test_session_id(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=2)
 
-    json_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "json")
-    assert len(json_files) == 1
-
-    records = helpers.get_records_from_json_file_in_artifacts_dir(
-        testdir, json_files[0]
-    )
+    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
     helpers.validate_json(records)
 
     for record in records:
