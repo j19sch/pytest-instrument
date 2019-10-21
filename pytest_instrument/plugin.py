@@ -16,7 +16,9 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
-    if config.getoption("--instrument") is True:
+
+def pytest_sessionstart(session):
+    if session.config.getoption("--instrument") is True:
         session_id = str(uuid.uuid4())
 
         try:
@@ -25,16 +27,19 @@ def pytest_configure(config):
             pass
         output_writer = open(f"./artifacts/{session_id}.pickle", "ab")
 
-        config.instrument = {"session_id": session_id, "output_writer": output_writer}
+        session.config.instrument = {
+            "session_id": session_id,
+            "output_writer": output_writer,
+        }
 
 
-def pytest_unconfigure(config):
-    if config.getoption("--instrument") is True:
-        output_writer = config.instrument["output_writer"]
+def pytest_sessionfinish(session, exitstatus):
+    if session.config.getoption("--instrument") is True:
+        output_writer = session.config.instrument["output_writer"]
         output_writer.close()
 
         artifacts_folder = "artifacts"
-        session_id = config.instrument["session_id"]
+        session_id = session.config.instrument["session_id"]
 
         data = []
         with open(f"./{artifacts_folder}/{session_id}.pickle", "rb") as pickle_file:
