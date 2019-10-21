@@ -34,7 +34,11 @@ JSON_SCHEMA = {
 
 def get_files_from_artifacts_dir_by_extension(testdir, extension):
     artifacts_dir = testdir.tmpdir.join(ARTIFACTS_DIRNAME)
-    return [file for file in os.listdir(artifacts_dir) if f".{extension}" in file]
+    try:
+        files = [file for file in os.listdir(artifacts_dir) if f".{extension}" in file]
+    except FileNotFoundError:
+        files = []
+    return files
 
 
 def get_records_from_json_file_in_artifacts_dir(testdir, filename):

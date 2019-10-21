@@ -28,5 +28,14 @@ def test_pickle_file_is_removed(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    json_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "pickle")
+    pickle_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "pickle")
+    assert len(pickle_files) == 0
+
+
+def test_without_instrument_option(testdir, tests_filename):
+    test_to_run = "test_passes"
+    result = testdir.runpytest("-vs", f"{tests_filename}::{test_to_run}")
+    result.assert_outcomes(error=0, failed=0, passed=1)
+
+    json_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "json")
     assert len(json_files) == 0
