@@ -23,7 +23,7 @@ JSON_SCHEMA = {
             "duration": {"type": "string", "pattern": DURATION_REGEX},
             "labels": {"type": ["array", "null"]},
             "tags": {"type": ["object", "null"]},
-            "fixtures": {"type": "array"},
+            "fixtures": {"type": ["array", "null"]},
         },
         "additionalProperties": False,
         "minProperties": 11,

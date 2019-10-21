@@ -72,11 +72,14 @@ def pytest_runtest_setup(item):
 
         item.config.hook.pytest_instrument_tags(config=item.config, tags=tags)
 
+        labels = None if not labels else labels
+        tags = None if not tags else tags
         labels_and_tags = {"labels": labels, "tags": tags}
         item.user_properties.append(("instrument", labels_and_tags))
 
         fixtures = item.fixturenames.copy()
         item.config.hook.pytest_instrument_fixtures(fixtures=fixtures)
+        fixtures = None if not fixtures else fixtures
         item.user_properties.append(("fixtures", fixtures))
 
 

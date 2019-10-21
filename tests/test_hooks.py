@@ -101,6 +101,6 @@ def test_fixture_hook_removes_fixture(testdir):
     records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
     helpers.validate_json(records)
 
-    assert len([record for record in records if record["fixtures"] == []]) == len(
+    assert len([record for record in records if record["fixtures"] is None]) == len(
         records
     )
