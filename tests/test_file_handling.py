@@ -10,32 +10,21 @@ def tests_filename(testdir):
     return filename
 
 
-def test_single_json_file_is_created(testdir, tests_filename):
+def test_single_log_file_is_created(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
         "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    json_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "json")
-    assert len(json_files) == 1
+    log_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "log")
+    assert len(log_files) == 1
 
 
-def test_pickle_file_is_removed(testdir, tests_filename):
-    test_to_run = "test_passes"
-    result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
-    )
-    result.assert_outcomes(error=0, failed=0, passed=1)
-
-    pickle_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "pickle")
-    assert len(pickle_files) == 0
-
-
-def test_without_instrument_option(testdir, tests_filename):
+def test_no_file_created_without_instrument_option(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest("-vs", f"{tests_filename}::{test_to_run}")
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    json_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "json")
-    assert len(json_files) == 0
+    log_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "log")
+    assert len(log_files) == 0

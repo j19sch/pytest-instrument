@@ -13,7 +13,9 @@ def test_label_hook_sets_first_label(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
+
     expected_labels = [label]
     assert len(
         [record for record in records if record["labels"] == expected_labels]
@@ -32,7 +34,9 @@ def test_label_hook_adds_label(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
+
     expected_labels = ["a_mark", label]
     assert len(
         [record for record in records if record["labels"] == expected_labels]
@@ -55,7 +59,9 @@ def test_tag_hook_sets_first_tag(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
+
     expected_tags = {tag_key: tag_value}
     assert len(
         [record for record in records if record["tags"] == expected_tags]
@@ -78,8 +84,8 @@ def test_tag_hook_adds_tag(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     expected_tags = {"my_mark": "a_mark", tag_key: tag_value}
     assert len(
@@ -98,8 +104,8 @@ def test_fixture_hook_removes_fixture(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     assert len([record for record in records if record["fixtures"] is None]) == len(
         records
