@@ -18,8 +18,8 @@ def test_setup_fixtures_with_different_scopes(testdir, tests_filename, fixture_s
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     expected_fixtures = [f"setup_fixture_with_{fixture_scope}_scope"]
     assert len(
@@ -37,8 +37,8 @@ def test_teardown_fixtures_with_different_scopes(
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     expected_fixtures = [f"teardown_fixture_with_{fixture_scope}_scope"]
     assert len(
@@ -53,8 +53,8 @@ def test_multiple_fixtures(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     expected_fixtures = [
         "setup_fixture_with_function_scope",
@@ -72,8 +72,8 @@ def test_without_fixtures(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     assert len([record for record in records if record["fixtures"] is None]) == len(
         records
@@ -87,8 +87,8 @@ def test_named_fixture(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     expected_fixtures = ["named_fixture"]
     assert len(
@@ -103,8 +103,8 @@ def test_child_fixture(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     expected_fixtures = ["child_fixture", "parent_fixture"]
     assert len(

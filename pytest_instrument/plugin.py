@@ -1,7 +1,5 @@
-import json
 import logging
 import os
-import pickle
 import uuid
 
 from pytest_instrument.logging_helpers import logfile_handler
@@ -28,38 +26,14 @@ def pytest_sessionstart(session):
             os.mkdir("./artifacts", mode=0o777)
         except FileExistsError:
             pass
-        output_writer = open(f"./artifacts/{session_id}.pickle", "ab")
 
         log_file = f"./artifacts/{session_id}.log"
         log_handler = logfile_handler(log_file)
 
         session.config.instrument = {
             "session_id": session_id,
-            "output_writer": output_writer,
             "logfile_handler": log_handler,
         }
-
-
-def pytest_sessionfinish(session, exitstatus):
-    if session.config.getoption("--instrument") is True:
-        output_writer = session.config.instrument["output_writer"]
-        output_writer.close()
-
-        artifacts_folder = "artifacts"
-        session_id = session.config.instrument["session_id"]
-
-        data = []
-        with open(f"./{artifacts_folder}/{session_id}.pickle", "rb") as pickle_file:
-            try:
-                while True:
-                    data.append(pickle.load(pickle_file))
-            except EOFError:
-                pass
-
-        with open(f"./{artifacts_folder}/{session_id}.json", "w") as json_file:
-            json.dump(data, json_file)
-
-        os.remove(f"./{artifacts_folder}/{session_id}.pickle")
 
 
 def pytest_addhooks(pluginmanager):
@@ -119,6 +93,7 @@ def pytest_report_teststatus(report, config):
             fixtures = prop[1]
 
         record = {
+            "level": "INFO",
             "session_id": config.instrument["session_id"],
             "record_id": str(uuid.uuid4()),
             "node_id": report.nodeid,
@@ -134,5 +109,3 @@ def pytest_report_teststatus(report, config):
 
         log_record = logging.makeLogRecord(record)
         config.instrument["logfile_handler"].emit(log_record)
-
-        pickle.dump(record, config.instrument["output_writer"])

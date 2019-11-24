@@ -18,8 +18,8 @@ def test_record_id(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     for record in records:
         try:
@@ -37,8 +37,8 @@ def test_session_id(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=2)
 
-    records = helpers.get_json_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.validate_json(records)
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
 
     for record in records:
         try:
