@@ -63,7 +63,11 @@ def test_message_field(testdir, tests_filename):
     helpers.json_validate_each_record(records)
 
     for record in records:
-        assert record["message"] == ""
+        assert record["message"] in [
+            "test_log_record_field_tests.py::test_passes setup passed",
+            "test_log_record_field_tests.py::test_passes call passed",
+            "test_log_record_field_tests.py::test_passes teardown passed",
+        ]
 
 
 def test_filename_field(testdir, tests_filename):

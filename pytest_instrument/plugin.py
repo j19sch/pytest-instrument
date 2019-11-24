@@ -112,6 +112,7 @@ def pytest_report_teststatus(report, config):
         record = {
             "name": "pytest-instrument",
             "level": "INFO",
+            "msg": f"{report.nodeid} {report.when} {report.outcome}",
             "session_id": config.instrument["session_id"],
             "record_id": str(uuid.uuid4()),
             "node_id": report.nodeid,

@@ -21,6 +21,8 @@ def logfile_handler(logfile):
     formatter = CustomJsonFormatter(
         "%(timestamp) %(level) %(name) %(message) %(filename)s %(funcName)s %(lineno)d"
     )
+    # alt formatter
+    # formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     log_handler = logging.FileHandler(logfile)
     log_handler.setFormatter(formatter)
     return log_handler
