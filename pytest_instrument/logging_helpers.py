@@ -18,7 +18,9 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
 
 
 def logfile_handler(logfile):
-    formatter = CustomJsonFormatter("%(timestamp) %(level) %(name) %(message)")
+    formatter = CustomJsonFormatter(
+        "%(timestamp) %(level) %(name) %(message) %(filename)s %(funcName)s %(lineno)d"
+    )
     log_handler = logging.FileHandler(logfile)
     log_handler.setFormatter(formatter)
     return log_handler

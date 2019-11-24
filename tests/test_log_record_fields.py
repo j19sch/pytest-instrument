@@ -64,3 +64,45 @@ def test_message_field(testdir, tests_filename):
 
     for record in records:
         assert record["message"] == ""
+
+
+def test_filename_field(testdir, tests_filename):
+    test_to_run = "test_passes"
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+    )
+    result.assert_outcomes(error=0, failed=0, passed=1)
+
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
+
+    for record in records:
+        assert record["filename"] == ""
+
+
+def test_funcName_field(testdir, tests_filename):
+    test_to_run = "test_passes"
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+    )
+    result.assert_outcomes(error=0, failed=0, passed=1)
+
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
+
+    for record in records:
+        assert record["funcName"] is None
+
+
+def test_lineno_field(testdir, tests_filename):
+    test_to_run = "test_passes"
+    result = testdir.runpytest(
+        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+    )
+    result.assert_outcomes(error=0, failed=0, passed=1)
+
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    helpers.json_validate_each_record(records)
+
+    for record in records:
+        assert record["lineno"] == 0

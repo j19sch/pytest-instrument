@@ -17,6 +17,9 @@ LOG_RECORD_SCHEMA = {
         "level": {"type": "string"},
         "name": {"type": ["string", "null"]},
         "message": {"type": "string"},
+        "filename": {"type": "string"},
+        "funcName": {"type": ["string", "null"]},
+        "lineno": {"type": "number"},
         "session_id": {"type": "string", "pattern": UUID4_REGEX},
         "record_id": {"type": "string", "pattern": UUID4_REGEX},
         "node_id": {"type": "string"},
@@ -29,8 +32,17 @@ LOG_RECORD_SCHEMA = {
         "tags": {"type": ["object", "null"]},
         "fixtures": {"type": ["array", "null"]},
     },
+    "required": [
+        "timestamp",
+        "level",
+        "name",
+        "message",
+        "filename",
+        "funcName",
+        "lineno",
+    ],
     "additionalProperties": False,
-    "minProperties": 15,
+    "minProperties": 7,
     "uniqueItems": True,
 }
 
