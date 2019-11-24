@@ -1,7 +1,10 @@
 import json
+import logging
 import os
 import pickle
 import uuid
+
+from pytest_instrument.logging_helpers import logfile_handler
 
 
 def pytest_addoption(parser):
@@ -27,9 +30,13 @@ def pytest_sessionstart(session):
             pass
         output_writer = open(f"./artifacts/{session_id}.pickle", "ab")
 
+        log_file = f"./artifacts/{session_id}.log"
+        log_handler = logfile_handler(log_file)
+
         session.config.instrument = {
             "session_id": session_id,
             "output_writer": output_writer,
+            "logfile_handler": log_handler,
         }
 
 
@@ -124,5 +131,8 @@ def pytest_report_teststatus(report, config):
             "tags": labels_and_tags.get("tags", None),
             "fixtures": fixtures,
         }
+
+        log_record = logging.makeLogRecord(record)
+        config.instrument["logfile_handler"].emit(log_record)
 
         pickle.dump(record, config.instrument["output_writer"])
