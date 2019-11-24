@@ -93,6 +93,7 @@ def pytest_report_teststatus(report, config):
             fixtures = prop[1]
 
         record = {
+            "name": "pytest-instrument",
             "level": "INFO",
             "session_id": config.instrument["session_id"],
             "record_id": str(uuid.uuid4()),

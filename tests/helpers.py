@@ -1,6 +1,7 @@
 import json
 import os
 
+from datetime import datetime
 from jsonschema import validate
 
 ARTIFACTS_DIRNAME = "artifacts"
@@ -29,7 +30,7 @@ LOG_RECORD_SCHEMA = {
         "fixtures": {"type": ["array", "null"]},
     },
     "additionalProperties": False,
-    "minProperties": 11,
+    "minProperties": 15,
     "uniqueItems": True,
 }
 
@@ -63,3 +64,12 @@ def get_log_file_from_artifacts_dir_and_return_records(testdir):
 def json_validate_each_record(records):
     for record in records:
         validate(instance=record, schema=LOG_RECORD_SCHEMA)
+
+
+def validate_timestamp(timestamp, format):
+    try:
+        if timestamp != datetime.strptime(timestamp, format).strftime(format):
+            raise ValueError
+        return True
+    except ValueError:
+        return False
