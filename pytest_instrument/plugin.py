@@ -2,6 +2,9 @@ import logging
 import os
 import uuid
 
+import pytest
+import structlog
+
 from pytest_instrument.logging_helpers import logfile_handler
 
 
@@ -16,6 +19,20 @@ def pytest_addoption(parser):
 
 def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
+
+    structlog.configure(
+        processors=[
+            structlog.stdlib.PositionalArgumentsFormatter(),
+            structlog.processors.StackInfoRenderer(),
+            structlog.processors.format_exc_info,
+            structlog.processors.UnicodeDecoder(),
+            structlog.stdlib.render_to_log_kwargs,
+        ],
+        context_class=dict,
+        logger_factory=structlog.stdlib.LoggerFactory(),
+        wrapper_class=structlog.stdlib.BoundLogger,
+        cache_logger_on_first_use=True,
+    )
 
 
 def pytest_sessionstart(session):
@@ -110,3 +127,11 @@ def pytest_report_teststatus(report, config):
 
         log_record = logging.makeLogRecord(record)
         config.instrument["logfile_handler"].emit(log_record)
+
+
+@pytest.fixture
+def instr_logger(request):
+    logger = structlog.get_logger("pytest-instrument")
+    file_handler = request.config.instrument["logfile_handler"]
+    logger.addHandler(file_handler)
+    return structlog.get_logger("pytest-instrument")
