@@ -47,8 +47,14 @@ def pytest_sessionstart(session):
         log_file = f"./artifacts/{session_id}.log"
         log_handler = logfile_handler(log_file)
 
+        logger = structlog.get_logger("pytest-instrument")
+        logger.addHandler(log_handler)
+
+        session_bound_logger = logger.bind(session_id=session_id)
+
         session.config.instrument = {
             "session_id": session_id,
+            "logger": session_bound_logger,
             "logfile_handler": log_handler,
         }
 
@@ -125,13 +131,12 @@ def pytest_report_teststatus(report, config):
             "fixtures": fixtures,
         }
 
+        # Reason for makeLogRecord() and emit() instead of using a logger is to prevent
+        # these records from being captured and thus sent to stdout by pytest.
         log_record = logging.makeLogRecord(record)
         config.instrument["logfile_handler"].emit(log_record)
 
 
 @pytest.fixture
 def instr_logger(request):
-    logger = structlog.get_logger("pytest-instrument")
-    file_handler = request.config.instrument["logfile_handler"]
-    logger.addHandler(file_handler)
-    return structlog.get_logger("pytest-instrument")
+    return request.config.instrument["logger"]
