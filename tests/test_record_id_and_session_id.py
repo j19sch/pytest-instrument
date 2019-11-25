@@ -20,6 +20,7 @@ def test_record_id(testdir, tests_filename):
 
     records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
+    assert len(records) == 4
 
     for record in records:
         try:
@@ -28,6 +29,7 @@ def test_record_id(testdir, tests_filename):
             assert False, f"Record id {record['record_id']} is not a valid v4 UUID."
 
     record_ids = [_["record_id"] for _ in records]
+    assert len(record_ids) == len(records)
     assert len(record_ids) == len(set(record_ids))
 
 
@@ -39,6 +41,7 @@ def test_session_id(testdir, tests_filename):
 
     records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
+    assert len(records) == 8
 
     for record in records:
         try:
@@ -47,4 +50,5 @@ def test_session_id(testdir, tests_filename):
             assert False, f"Session id {record['session_id']} is not a valid v4 UUID."
 
     session_ids = [_["session_id"] for _ in records]
+    assert len(session_ids) == len(records)
     assert len(set(session_ids)) == 1

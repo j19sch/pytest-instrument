@@ -62,12 +62,25 @@ def test_message_field(testdir, tests_filename):
     records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
-    for record in records:
-        assert record["message"] in [
-            "test_log_record_field_tests.py::test_passes setup passed",
-            "test_log_record_field_tests.py::test_passes call passed",
-            "test_log_record_field_tests.py::test_passes teardown passed",
-        ]
+    assert len(records) == 3
+    assert any(
+        record
+        for record in records
+        if record["message"]
+        == "test_log_record_field_tests.py::test_passes setup passed"
+    )
+    assert any(
+        record
+        for record in records
+        if record["message"]
+        == "test_log_record_field_tests.py::test_passes call passed"
+    )
+    assert any(
+        record
+        for record in records
+        if record["message"]
+        == "test_log_record_field_tests.py::test_passes teardown passed"
+    )
 
 
 def test_filename_field(testdir, tests_filename):

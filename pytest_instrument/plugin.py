@@ -48,6 +48,7 @@ def pytest_sessionstart(session):
         log_handler = logfile_handler(log_file)
 
         logger = structlog.get_logger("pytest-instrument")
+        logger.setLevel("DEBUG")
         logger.addHandler(log_handler)
 
         session_bound_logger = logger.bind(session_id=session_id)

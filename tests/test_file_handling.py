@@ -10,7 +10,7 @@ def tests_filename(testdir):
     return filename
 
 
-def test_single_log_file_is_created(testdir, tests_filename):
+def test_single_log_file_is_created_with_instrument_option(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
         "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
