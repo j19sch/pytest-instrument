@@ -1,5 +1,6 @@
-from datetime import datetime
 import logging
+import uuid
+from datetime import datetime
 
 from pythonjsonlogger import jsonlogger
 
@@ -15,6 +16,8 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
             log_record["level"] = log_record["level"].lower()
         else:
             log_record["level"] = record.levelname.lower()
+        if not log_record.get("record_id"):
+            log_record["record_id"] = str(uuid.uuid4())
 
 
 def logfile_handler(logfile):
