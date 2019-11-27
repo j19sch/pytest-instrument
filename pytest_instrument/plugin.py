@@ -20,23 +20,23 @@ def pytest_addoption(parser):
 def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
-    structlog.configure(
-        processors=[
-            structlog.stdlib.PositionalArgumentsFormatter(),
-            structlog.processors.StackInfoRenderer(),
-            structlog.processors.format_exc_info,
-            structlog.processors.UnicodeDecoder(),
-            structlog.stdlib.render_to_log_kwargs,
-        ],
-        context_class=dict,
-        logger_factory=structlog.stdlib.LoggerFactory(),
-        wrapper_class=structlog.stdlib.BoundLogger,
-        cache_logger_on_first_use=True,
-    )
-
 
 def pytest_sessionstart(session):
     if session.config.getoption("--instrument") is True:
+        structlog.configure(
+            processors=[
+                structlog.stdlib.PositionalArgumentsFormatter(),
+                structlog.processors.StackInfoRenderer(),
+                structlog.processors.format_exc_info,
+                structlog.processors.UnicodeDecoder(),
+                structlog.stdlib.render_to_log_kwargs,
+            ],
+            context_class=dict,
+            logger_factory=structlog.stdlib.LoggerFactory(),
+            wrapper_class=structlog.stdlib.BoundLogger,
+            cache_logger_on_first_use=True,
+        )
+
         session_id = str(uuid.uuid4())
 
         try:
@@ -92,6 +92,13 @@ def pytest_runtest_setup(item):
         fixtures = None if not fixtures else fixtures
         item.user_properties.append(("fixtures", fixtures))
 
+        try:
+            logger = item.config.instrument["logger"].unbind("node_id")
+        except KeyError:
+            logger = item.config.instrument["logger"]
+
+        item.config.instrument["logger"] = logger.bind(node_id=item._nodeid)
+
 
 def pytest_runtest_makereport(item, call):
     if item.config.getoption("--instrument") is True:
@@ -138,6 +145,6 @@ def pytest_report_teststatus(report, config):
         config.instrument["logfile_handler"].emit(log_record)
 
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def instr_logger(request):
     return request.config.instrument["logger"]
