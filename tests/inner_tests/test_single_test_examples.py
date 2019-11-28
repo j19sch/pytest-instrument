@@ -32,7 +32,7 @@ def test_passes():
 
 
 class TestClass:
-    def test_passes(self):
+    def test_in_class_passes(self):
         assert True
 
 
