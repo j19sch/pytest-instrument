@@ -40,9 +40,12 @@ LOG_RECORD_SCHEMA = {
         "filename",
         "funcName",
         "lineno",
+        "session_id",
+        "record_id",
+        "node_id",
     ],
     "additionalProperties": False,
-    "minProperties": 7,
+    "minProperties": 10,
     "uniqueItems": True,
 }
 
