@@ -49,7 +49,7 @@ def test_name_field(testdir, tests_filename):
     helpers.json_validate_each_record(records)
 
     for record in records:
-        assert record["name"] == "pytest-instrument"
+        assert record["name"] == "instr.report"
 
 
 def test_message_field(testdir, tests_filename):

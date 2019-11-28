@@ -21,4 +21,6 @@ def test_emit_log_record(testdir, tests_filename):
     result.assert_outcomes(error=0, failed=0, passed=1)
 
     records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    log_records = [record for record in records if record['name'] == 'instr.log']
+    assert len(log_records) == 1
     helpers.json_validate_each_record(records)

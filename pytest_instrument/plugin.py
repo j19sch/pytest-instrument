@@ -47,7 +47,7 @@ def pytest_sessionstart(session):
         log_file = f"./artifacts/{session_id}.log"
         log_handler = logfile_handler(log_file)
 
-        logger = structlog.get_logger("pytest-instrument")
+        logger = structlog.get_logger("instr.log")
         logger.setLevel("DEBUG")
         logger.addHandler(log_handler)
 
@@ -124,7 +124,7 @@ def pytest_report_teststatus(report, config):
             fixtures = prop[1]
 
         record = {
-            "name": "pytest-instrument",
+            "name": "instr.report",
             "level": "INFO",
             "msg": f"{report.nodeid} {report.when} {report.outcome}",
             "session_id": config.instrument["session_id"],
