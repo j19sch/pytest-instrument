@@ -5,7 +5,7 @@ from tests import helpers
 
 @pytest.fixture(scope="function")
 def tests_filename(testdir):
-    filename = "test_log_record_field_tests.py"
+    filename = "test_single_test_examples.py"
     testdir.copy_example(filename)
     return filename
 
@@ -66,20 +66,17 @@ def test_message_field(testdir, tests_filename):
     assert any(
         record
         for record in records
-        if record["message"]
-        == "test_log_record_field_tests.py::test_passes setup passed"
+        if record["message"] == f"{tests_filename}::{test_to_run} setup passed"
     )
     assert any(
         record
         for record in records
-        if record["message"]
-        == "test_log_record_field_tests.py::test_passes call passed"
+        if record["message"] == f"{tests_filename}::{test_to_run} call passed"
     )
     assert any(
         record
         for record in records
-        if record["message"]
-        == "test_log_record_field_tests.py::test_passes teardown passed"
+        if record["message"] == f"{tests_filename}::{test_to_run} teardown passed"
     )
 
 

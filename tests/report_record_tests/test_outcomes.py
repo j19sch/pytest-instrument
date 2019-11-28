@@ -5,7 +5,7 @@ from tests import helpers
 
 @pytest.fixture(scope="function")
 def tests_filename(testdir):
-    filename = "test_results_setup_teardown_call.py"
+    filename = "test_single_test_examples.py"
     testdir.copy_example(filename)
     return filename
 
