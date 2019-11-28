@@ -21,6 +21,12 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
 
+def pytest_unconfigure(config):
+    if config.getoption("--instrument") is True:
+        config.instrument["logfile_handler"].close()
+        config.instrument["logger"].removeHandler(config.instrument["logfile_handler"])
+
+
 def pytest_sessionstart(session):
     if session.config.getoption("--instrument") is True:
         structlog.configure(
