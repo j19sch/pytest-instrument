@@ -13,7 +13,7 @@ def tests_filename(testdir):
 def test_single_log_file_is_created_with_instrument_option(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 

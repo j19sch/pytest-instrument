@@ -14,7 +14,7 @@ def test_emit_log_record(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
         "-vs",
-        "--instrument",
+        "--instrument=json",
         "--log-cli-level=debug",
         f"{tests_filename}::{test_to_run}",
     )

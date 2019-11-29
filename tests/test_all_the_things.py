@@ -9,4 +9,4 @@ def tests_filename(testdir):
 
 
 def test_run_all_the_things(testdir, tests_filename):
-    testdir.runpytest("-vs", "--instrument", f"{tests_filename}")
+    testdir.runpytest("-vs", "--instrument=json", f"{tests_filename}")

@@ -9,7 +9,7 @@ def test_label_hook_sets_first_label(testdir):
 
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
-        "-vs", "--instrument", f"--env={label}", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"--env={label}", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(passed=1)
 
@@ -30,7 +30,7 @@ def test_label_hook_adds_label(testdir):
 
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
-        "-vs", "--instrument", f"--env={label}", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"--env={label}", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(passed=1)
 
@@ -53,7 +53,7 @@ def test_tag_hook_sets_first_tag(testdir):
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
         "-vs",
-        "--instrument",
+        "--instrument=json",
         f"--{tag_key}={tag_value}",
         f"{tests_filename}::{test_to_run}",
     )
@@ -78,7 +78,7 @@ def test_tag_hook_adds_tag(testdir):
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
         "-vs",
-        "--instrument",
+        "--instrument=json",
         f"--{tag_key}={tag_value}",
         f"{tests_filename}::{test_to_run}",
     )
@@ -100,7 +100,7 @@ def test_fixture_hook_removes_fixture(testdir):
 
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(passed=1)
 

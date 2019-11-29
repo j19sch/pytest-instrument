@@ -14,7 +14,7 @@ def tests_filename(testdir):
 def test_record_id(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
@@ -35,7 +35,7 @@ def test_record_id(testdir, tests_filename):
 
 def test_session_id(testdir, tests_filename):
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}", "-k in_session"
+        "-vs", "--instrument=json", f"{tests_filename}", "-k in_session"
     )
     result.assert_outcomes(error=0, failed=0, passed=2)
 

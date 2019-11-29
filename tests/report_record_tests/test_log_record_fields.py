@@ -13,7 +13,7 @@ def tests_filename(testdir):
 def test_level_field(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
@@ -27,7 +27,7 @@ def test_level_field(testdir, tests_filename):
 def test_timestamp_field(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
@@ -41,7 +41,7 @@ def test_timestamp_field(testdir, tests_filename):
 def test_name_field(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
@@ -55,7 +55,7 @@ def test_name_field(testdir, tests_filename):
 def test_message_field(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
@@ -83,7 +83,7 @@ def test_message_field(testdir, tests_filename):
 def test_filename_field(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
@@ -97,7 +97,7 @@ def test_filename_field(testdir, tests_filename):
 def test_funcName_field(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
@@ -111,7 +111,7 @@ def test_funcName_field(testdir, tests_filename):
 def test_lineno_field(testdir, tests_filename):
     test_to_run = "test_passes"
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
