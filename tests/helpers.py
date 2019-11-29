@@ -1,7 +1,7 @@
 import json
 import os
-
 from datetime import datetime
+
 from jsonschema import validate
 
 ARTIFACTS_DIRNAME = "artifacts"
@@ -9,8 +9,7 @@ UUID4_REGEX = "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9
 START_STOP_REGEX = "^[0-9]{10}\\.[0-9]{1,7}$"
 DURATION_REGEX = "^[0-9]{1,}\\.[0-9]{1,12}$"
 
-
-LOG_RECORD_SCHEMA = {
+SHARED_OBJECTS = {
     "type": "object",
     "properties": {
         "timestamp": {"type": "string"},
@@ -23,14 +22,6 @@ LOG_RECORD_SCHEMA = {
         "session_id": {"type": "string", "pattern": UUID4_REGEX},
         "record_id": {"type": "string", "pattern": UUID4_REGEX},
         "node_id": {"type": "string"},
-        "when": {"type": "string", "enum": ["setup", "call", "teardown"]},
-        "outcome": {"type": "string", "enum": ["passed", "failed", "skipped"]},
-        "start": {"type": "string", "pattern": START_STOP_REGEX},
-        "stop": {"type": "string", "pattern": START_STOP_REGEX},
-        "duration": {"type": "string", "pattern": DURATION_REGEX},
-        "labels": {"type": ["array", "null"]},
-        "tags": {"type": ["object", "null"]},
-        "fixtures": {"type": ["array", "null"]},
     },
     "required": [
         "timestamp",
@@ -44,10 +35,40 @@ LOG_RECORD_SCHEMA = {
         "record_id",
         "node_id",
     ],
-    "additionalProperties": False,
-    "minProperties": 10,
     "uniqueItems": True,
 }
+
+REPORT_SCHEMA = {
+    "allOf": [
+        SHARED_OBJECTS,
+        {
+            "type": "object",
+            "properties": {
+                "when": {"type": "string", "enum": ["setup", "call", "teardown"]},
+                "outcome": {"type": "string", "enum": ["passed", "failed", "skipped"]},
+                "start": {"type": "string", "pattern": START_STOP_REGEX},
+                "stop": {"type": "string", "pattern": START_STOP_REGEX},
+                "duration": {"type": "string", "pattern": DURATION_REGEX},
+                "labels": {"type": ["array", "null"]},
+                "tags": {"type": ["object", "null"]},
+                "fixtures": {"type": ["array", "null"]},
+            },
+            "required": [
+                "when",
+                "outcome",
+                "start",
+                "stop",
+                "duration",
+                "labels",
+                "tags",
+                "fixtures",
+            ],
+            "uniqueItems": True,
+        },
+    ]
+}
+
+LOG_SCHEMA = {"allOf": [SHARED_OBJECTS]}
 
 
 def get_files_from_artifacts_dir_by_extension(testdir, extension):
@@ -78,7 +99,10 @@ def get_log_file_from_artifacts_dir_and_return_records(testdir):
 
 def json_validate_each_record(records):
     for record in records:
-        validate(instance=record, schema=LOG_RECORD_SCHEMA)
+        if record["name"].startswith("instr.report"):
+            validate(instance=record, schema=REPORT_SCHEMA)
+        elif record["name"].startswith("instr.log"):
+            validate(instance=record, schema=LOG_SCHEMA)
 
 
 def validate_timestamp(timestamp, format):
