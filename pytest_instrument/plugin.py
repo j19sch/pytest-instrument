@@ -63,7 +63,9 @@ def pytest_sessionstart(session):
 def pytest_sessionfinish(session, exitstatus):
     if session.config.getoption("instrument") is True:
         session.config.instrument["logfile_handler"].close()
-        session.config.instrument["logger"].removeHandler(session.config.instrument["logfile_handler"])
+        session.config.instrument["logger"].removeHandler(
+            session.config.instrument["logfile_handler"]
+        )
 
 
 def pytest_addhooks(pluginmanager):
@@ -106,49 +108,55 @@ def pytest_runtest_setup(item):
         item.config.instrument["logger"] = logger.bind(node_id=item._nodeid)
 
 
+@pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     if item.config.getoption("instrument") is True:
         item.user_properties.append(
             (call.when, {"start": call.start, "stop": call.stop})
         )
 
+        outcome = yield
+        report = outcome.get_result()
 
-def pytest_report_teststatus(report, config):
-    if config.getoption("instrument") is True:
-        labels_and_tags = {}
-        for prop in (
-            prop for prop in report.user_properties if prop[0] == "instrument"
-        ):
-            labels_and_tags = prop[1]
+        _log_report(report, item.config)
 
-        timestamps = {}
-        for prop in (prop for prop in report.user_properties if prop[0] == report.when):
-            timestamps = prop[1]
+    else:
+        yield
 
-        fixtures = []
-        for prop in (prop for prop in report.user_properties if prop[0] == "fixtures"):
-            fixtures = prop[1]
 
-        record = {
-            "name": "instr.report",
-            "level": "INFO",
-            "msg": f"{report.nodeid} {report.when} {report.outcome}",
-            "session_id": config.instrument["session_id"],
-            "node_id": report.nodeid,
-            "when": report.when,
-            "outcome": report.outcome,
-            "start": str(timestamps["start"]),
-            "stop": str(timestamps["stop"]),
-            "duration": f"{report.duration:.12f}",
-            "labels": labels_and_tags.get("labels", None),
-            "tags": labels_and_tags.get("tags", None),
-            "fixtures": fixtures,
-        }
+def _log_report(report, config):
+    labels_and_tags = {}
+    for prop in (prop for prop in report.user_properties if prop[0] == "instrument"):
+        labels_and_tags = prop[1]
 
-        # Reason for makeLogRecord() and emit() instead of using a logger is to prevent
-        # these records from being captured and thus sent to stdout by pytest.
-        log_record = logging.makeLogRecord(record)
-        config.instrument["logfile_handler"].emit(log_record)
+    timestamps = {}
+    for prop in (prop for prop in report.user_properties if prop[0] == report.when):
+        timestamps = prop[1]
+
+    fixtures = []
+    for prop in (prop for prop in report.user_properties if prop[0] == "fixtures"):
+        fixtures = prop[1]
+
+    record = {
+        "name": "instr.report",
+        "level": "INFO",
+        "msg": f"{report.nodeid} {report.when} {report.outcome}",
+        "session_id": config.instrument["session_id"],
+        "node_id": report.nodeid,
+        "when": report.when,
+        "outcome": report.outcome,
+        "start": str(timestamps["start"]),
+        "stop": str(timestamps["stop"]),
+        "duration": f"{report.duration:.12f}",
+        "labels": labels_and_tags.get("labels", None),
+        "tags": labels_and_tags.get("tags", None),
+        "fixtures": fixtures,
+    }
+
+    # Reason for makeLogRecord() and emit() instead of using a logger is to prevent
+    # these records from being captured and thus sent to stdout by pytest.
+    log_record = logging.makeLogRecord(record)
+    config.instrument["logfile_handler"].emit(log_record)
 
 
 @pytest.fixture(scope="session")
