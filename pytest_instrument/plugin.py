@@ -21,14 +21,8 @@ def pytest_configure(config):
     config.addinivalue_line("markers", "instrument: pytest-instrument mark")
 
 
-def pytest_unconfigure(config):
-    if config.getoption("--instrument") is True:
-        config.instrument["logfile_handler"].close()
-        config.instrument["logger"].removeHandler(config.instrument["logfile_handler"])
-
-
 def pytest_sessionstart(session):
-    if session.config.getoption("--instrument") is True:
+    if session.config.getoption("instrument") is True:
         structlog.configure(
             processors=[
                 structlog.stdlib.PositionalArgumentsFormatter(),
@@ -66,6 +60,12 @@ def pytest_sessionstart(session):
         }
 
 
+def pytest_sessionfinish(session, exitstatus):
+    if session.config.getoption("instrument") is True:
+        session.config.instrument["logfile_handler"].close()
+        session.config.instrument["logger"].removeHandler(session.config.instrument["logfile_handler"])
+
+
 def pytest_addhooks(pluginmanager):
     from pytest_instrument import hooks
 
@@ -73,7 +73,7 @@ def pytest_addhooks(pluginmanager):
 
 
 def pytest_runtest_setup(item):
-    if item.config.getoption("--instrument") is True:
+    if item.config.getoption("instrument") is True:
         try:
             labels = list([_.args for _ in item.iter_markers("instrument")][0])
         except IndexError:
@@ -107,14 +107,14 @@ def pytest_runtest_setup(item):
 
 
 def pytest_runtest_makereport(item, call):
-    if item.config.getoption("--instrument") is True:
+    if item.config.getoption("instrument") is True:
         item.user_properties.append(
             (call.when, {"start": call.start, "stop": call.stop})
         )
 
 
 def pytest_report_teststatus(report, config):
-    if config.getoption("--instrument") is True:
+    if config.getoption("instrument") is True:
         labels_and_tags = {}
         for prop in (
             prop for prop in report.user_properties if prop[0] == "instrument"
