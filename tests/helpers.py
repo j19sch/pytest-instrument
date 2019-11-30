@@ -14,7 +14,7 @@ SHARED_OBJECTS = {
     "properties": {
         "timestamp": {"type": "string"},
         "level": {"type": "string"},
-        "name": {"type": ["string", "null"]},
+        "name": {"type": "string"},
         "message": {"type": "string"},
         "filename": {"type": "string"},
         "funcName": {"type": ["string", "null"]},
