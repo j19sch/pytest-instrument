@@ -9,6 +9,7 @@ UUID4_REGEX = "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9
 START_STOP_REGEX = "^[0-9]{10}\\.[0-9]{1,7}$"
 DURATION_REGEX = "^[0-9]{1,}\\.[0-9]{1,12}$"
 TIMESTAMP_REGEX = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{6}"
+NAME_REGEX = "^instr\\.(report|log)(\\.\\w+)?$"
 
 SHARED_OBJECTS = {
     "type": "object",
@@ -18,7 +19,7 @@ SHARED_OBJECTS = {
             "type": "string",
             "enum": ["critical", "error", "warning", "info", "debug", "notset"],
         },
-        "name": {"type": "string"},
+        "name": {"type": "string", "pattern": NAME_REGEX},
         "message": {"type": "string"},
         "session_id": {"type": "string", "pattern": UUID4_REGEX},
         "record_id": {"type": "string", "pattern": UUID4_REGEX},
