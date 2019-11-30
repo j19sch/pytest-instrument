@@ -148,8 +148,3 @@ def _log_report(report, config):
         # these records from being captured and thus sent to stdout by pytest.
         log_record = logging.makeLogRecord(record)
         config.instrument["logfile_handler"].emit(log_record)
-
-
-@pytest.fixture(scope="session")
-def instr_logger(request):
-    return request.config.instrument["logger"]

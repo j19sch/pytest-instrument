@@ -1,8 +1,8 @@
 import structlog
 
 
-def test_passes(instr_logger):
-    instr_logger.error("Oh no, there is an error!")
+def test_passes(request):
+    request.config.instrument["logger"].error("Oh no, there is an error!")
 
 
 def test_sub_logger(request):
