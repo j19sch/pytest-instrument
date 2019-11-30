@@ -10,6 +10,10 @@ pytest-instrument
     :target: https://pypi.org/project/pytest-instrument
     :alt: Python versions
 
+.. image:: https://img.shields.io/pypi/dm/pytest-instrument
+    :target: https://pypistats.org/packages/pytest-instrument
+    :alt: PyPI - Downloads
+
 .. image:: https://circleci.com/gh/j19sch/pytest-instrument/tree/master.svg?style=svg
     :target: https://circleci.com/gh/j19sch/pytest-instrument/tree/master
     :alt: See Build Status on Circle CI
