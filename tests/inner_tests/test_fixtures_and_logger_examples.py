@@ -37,3 +37,9 @@ def test_with_all_fixtures_and_logger(
     request, session_fixture, module_fixture, function_fixture
 ):
     request.config.instrument["logger"].info("test itself")
+
+
+def test_two_with_all_fixtures_and_logger(
+    request, session_fixture, module_fixture, function_fixture
+):
+    request.config.instrument["logger"].info("test two itself")

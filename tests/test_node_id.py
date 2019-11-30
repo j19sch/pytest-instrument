@@ -5,7 +5,7 @@ from tests import helpers
 
 @pytest.fixture(scope="function")
 def tests_filename(testdir):
-    filename = "test_single_test_with_logger_examples.py"
+    filename = "test_fixtures_and_logger_examples.py"
     testdir.copy_example(filename)
     return filename
 

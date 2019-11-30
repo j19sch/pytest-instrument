@@ -6,21 +6,17 @@ from tests import helpers
 
 @pytest.fixture(scope="function")
 def tests_filename(testdir):
-    filename = "test_metadata_examples.py"
+    filename = "test_fixtures_and_logger_examples.py"
     testdir.copy_example(filename)
     return filename
 
 
 def test_record_id(testdir, tests_filename):
-    test_to_run = "test_passes"
-    result = testdir.runpytest(
-        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
-    )
-    result.assert_outcomes(error=0, failed=0, passed=1)
+    result = testdir.runpytest("-vs", "--instrument=json", f"{tests_filename}")
+    result.assert_outcomes(error=0, failed=0, passed=4)
 
     records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
-    assert len(records) == 4
 
     for record in records:
         try:
@@ -34,14 +30,11 @@ def test_record_id(testdir, tests_filename):
 
 
 def test_session_id(testdir, tests_filename):
-    result = testdir.runpytest(
-        "-vs", "--instrument=json", f"{tests_filename}", "-k in_session"
-    )
-    result.assert_outcomes(error=0, failed=0, passed=2)
+    result = testdir.runpytest("-vs", "--instrument=json", f"{tests_filename}")
+    result.assert_outcomes(error=0, failed=0, passed=4)
 
     records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
-    assert len(records) == 8
 
     for record in records:
         try:
