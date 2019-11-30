@@ -29,6 +29,8 @@ def test_emit_log_record(testdir, tests_filename):
     record_level = "ERROR"
     record_lineno = 5
     record_message = "Oh no, there is an error!"
+    record_filename = "test_instr_logger_examples.py"
+    record_funcName = "test_passes"
 
     result.stdout.fnmatch_lines(
         f"{record_level}    {record_name}:{tests_filename}:{record_lineno} {record_message}"
@@ -37,6 +39,8 @@ def test_emit_log_record(testdir, tests_filename):
     assert log_records[0]["level"] == record_level.lower()
     assert log_records[0]["lineno"] == record_lineno
     assert log_records[0]["name"] == record_name
+    assert log_records[0]["filename"] == record_filename
+    assert log_records[0]["funcName"] == record_funcName
 
 
 def test_sublogger(testdir, tests_filename):
@@ -60,6 +64,8 @@ def test_sublogger(testdir, tests_filename):
     record_level = "INFO"
     record_lineno = 12
     record_message = "this actually works"
+    record_filename = "test_instr_logger_examples.py"
+    record_funcName = "test_sub_logger"
 
     result.stdout.fnmatch_lines(
         f"{record_level}     {record_name}:{tests_filename}:{record_lineno} {record_message}"
@@ -68,3 +74,5 @@ def test_sublogger(testdir, tests_filename):
     assert log_records[0]["level"] == record_level.lower()
     assert log_records[0]["lineno"] == record_lineno
     assert log_records[0]["name"] == record_name
+    assert log_records[0]["filename"] == record_filename
+    assert log_records[0]["funcName"] == record_funcName
