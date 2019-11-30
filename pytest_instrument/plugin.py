@@ -127,6 +127,7 @@ def _log_report(report, config):
 
     record = {
         "name": "instr.report",
+        # ToDo: set level based on passed, skipped, failed
         "level": "INFO",
         "msg": f"{report.nodeid} {report.when} {report.outcome}",
         "session_id": config.instrument["session_id"],
