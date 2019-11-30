@@ -6,14 +6,14 @@ from datetime import datetime
 from pythonjsonlogger import jsonlogger
 
 
-def setup_log_file_handler(filename, type):
+def setup_log_file_handler(filename, output_format):
     try:
         os.mkdir("./artifacts", mode=0o777)
     except FileExistsError:
         pass
     log_file = f"./artifacts/{filename}"
 
-    if type == "json":
+    if output_format == "json":
         return json_logfile_handler(log_file)
     # ToDo: add tests for log_logfile_handler and enable
 
