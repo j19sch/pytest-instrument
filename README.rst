@@ -43,7 +43,7 @@ Features
     * labels (`array`) and tags (`object`) via `@pytest.mark.instrument()` decorator
     * fixtures
 * hooks to edit labels, tags and fixtures before the record is written to file
-* a logger emitting records with session id, record id, node id to the same `log` file
+* a logger to emit records with session id, record id, node id to the same `log` file
 
 
 Requirements
@@ -74,7 +74,17 @@ will be written to that directory.
 To display the contents of the `.log` file, use `jq`: `jq . <filename>`. Or, if for instance you only want to
 see the message object of each record: `jq '{message: .message}' <filename>`
 
-The logger is available as `request.config.instrument["logger"]`, regardless of the `--instrument` option.
+The `structlog <https://www.structlog.org/en/stable/>`_ logger is available as `request.config.instrument["logger"]`,
+regardless of the `--instrument` option being set or not.
+
+If you want to add your own logger, you can do that like this:
+
+.. code-block:: python
+
+    logger = structlog.get_logger("instr.log.sublogger").bind(
+        session_id=request.config.instrument["session_id"], node_id=request.node.nodeid)
+
+Note that you have the bind the session id and node id yourself, to have those in the log record.
 
 
 Labels and tags
