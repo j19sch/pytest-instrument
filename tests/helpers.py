@@ -8,17 +8,18 @@ ARTIFACTS_DIRNAME = "artifacts"
 UUID4_REGEX = "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-4[a-fA-F0-9]{3}-[89abAB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$"
 START_STOP_REGEX = "^[0-9]{10}\\.[0-9]{1,7}$"
 DURATION_REGEX = "^[0-9]{1,}\\.[0-9]{1,12}$"
+TIMESTAMP_REGEX = "^\\d{4}-\\d{2}-\\d{2} \\d{2}:\\d{2}:\\d{2}\\.\\d{6}"
 
 SHARED_OBJECTS = {
     "type": "object",
     "properties": {
-        "timestamp": {"type": "string"},
-        "level": {"type": "string"},
+        "timestamp": {"type": "string", "pattern": TIMESTAMP_REGEX},
+        "level": {
+            "type": "string",
+            "enum": ["critical", "error", "warning", "info", "debug", "notset"],
+        },
         "name": {"type": "string"},
         "message": {"type": "string"},
-        "filename": {"type": "string"},
-        "funcName": {"type": ["string", "null"]},
-        "lineno": {"type": "number"},
         "session_id": {"type": "string", "pattern": UUID4_REGEX},
         "record_id": {"type": "string", "pattern": UUID4_REGEX},
         "node_id": {"type": "string"},
@@ -28,9 +29,6 @@ SHARED_OBJECTS = {
         "level",
         "name",
         "message",
-        "filename",
-        "funcName",
-        "lineno",
         "session_id",
         "record_id",
         "node_id",
@@ -44,6 +42,9 @@ REPORT_SCHEMA = {
         {
             "type": "object",
             "properties": {
+                "filename": {"type": "string", "minLength": 0, "maxLength": 0},
+                "funcName": {"type": "null"},
+                "lineno": {"type": "integer", "minimum": 0, "maximum": 0},
                 "when": {"type": "string", "enum": ["setup", "call", "teardown"]},
                 "outcome": {"type": "string", "enum": ["passed", "failed", "skipped"]},
                 "start": {"type": "string", "pattern": START_STOP_REGEX},
@@ -54,6 +55,9 @@ REPORT_SCHEMA = {
                 "fixtures": {"type": ["array", "null"]},
             },
             "required": [
+                "filename",
+                "funcName",
+                "lineno",
                 "when",
                 "outcome",
                 "start",
@@ -68,7 +72,21 @@ REPORT_SCHEMA = {
     ]
 }
 
-LOG_SCHEMA = {"allOf": [SHARED_OBJECTS]}
+LOG_SCHEMA = {
+    "allOf": [
+        SHARED_OBJECTS,
+        {
+            "type": "object",
+            "properties": {
+                "filename": {"type": "string"},
+                "funcName": {"type": "string"},
+                "lineno": {"type": "integer", "minimum": 1},
+            },
+            "required": ["filename", "funcName", "lineno"],
+            "uniqueItems": True,
+        },
+    ]
+}
 
 
 def get_files_from_artifacts_dir_by_extension(testdir, extension):
@@ -105,9 +123,9 @@ def json_validate_each_record(records):
             validate(instance=record, schema=LOG_SCHEMA)
 
 
-def validate_timestamp(timestamp, format):
+def validate_timestamp(timestamp, date_format):
     try:
-        if timestamp != datetime.strptime(timestamp, format).strftime(format):
+        if timestamp != datetime.strptime(timestamp, date_format).strftime(date_format):
             raise ValueError
         return True
     except ValueError:
