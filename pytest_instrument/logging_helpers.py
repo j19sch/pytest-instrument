@@ -5,6 +5,10 @@ from datetime import datetime
 
 from pythonjsonlogger import jsonlogger
 
+# https://github.com/tonysyu/logquacious/blob/master/logquacious/backport_configurable_stacklevel.py
+# https://github.com/python/cpython/pull/7424
+# https://stackoverflow.com/questions/19615876/showing-the-right-funcname-when-wrapping-logger-functionality-in-a-custom-class
+# https://stackoverflow.com/questions/32443808/best-way-to-override-lineno-in-python-logger
 
 class InstLogger(logging.Logger):
     def __init__(self, name):
