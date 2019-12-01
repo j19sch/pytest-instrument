@@ -31,6 +31,11 @@ def test_passes():
     assert True
 
 
+class TestClass:
+    def test_in_class_passes(self):
+        assert True
+
+
 def test_teardown_passes(teardown_passes):
     assert True
 

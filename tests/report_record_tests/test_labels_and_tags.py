@@ -5,14 +5,14 @@ from tests import helpers
 
 @pytest.fixture(scope="function")
 def tests_filename(testdir):
-    filename = "test_mark_tests.py"
+    filename = "test_mark_examples.py"
     testdir.copy_example(filename)
     return filename
 
 
 def test_single_arg_in_mark_instrument(testdir, tests_filename):
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::test_single_arg_in_mark"
+        "-vs", "--instrument=json", f"{tests_filename}::test_single_arg_in_mark"
     )
     result.assert_outcomes(passed=1)
 
@@ -27,7 +27,7 @@ def test_single_arg_in_mark_instrument(testdir, tests_filename):
 
 def test_single_kwarg_in_mark_instrument(testdir, tests_filename):
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::test_single_kwarg_in_mark"
+        "-vs", "--instrument=json", f"{tests_filename}::test_single_kwarg_in_mark"
     )
     result.assert_outcomes(passed=1)
 
@@ -42,7 +42,7 @@ def test_single_kwarg_in_mark_instrument(testdir, tests_filename):
 
 def test_multiple_args_in_mark_instrument(testdir, tests_filename):
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::test_multiple_args_in_mark"
+        "-vs", "--instrument=json", f"{tests_filename}::test_multiple_args_in_mark"
     )
     result.assert_outcomes(passed=1)
 
@@ -57,7 +57,7 @@ def test_multiple_args_in_mark_instrument(testdir, tests_filename):
 
 def test_multiple_kwargs_in_mark_instrument(testdir, tests_filename):
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::test_multiple_kwargs_in_mark"
+        "-vs", "--instrument=json", f"{tests_filename}::test_multiple_kwargs_in_mark"
     )
     result.assert_outcomes(passed=1)
 
@@ -72,7 +72,9 @@ def test_multiple_kwargs_in_mark_instrument(testdir, tests_filename):
 
 def test_with_single_arg_and_single_kwarg_in_mark_instrument(testdir, tests_filename):
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::test_with_args_and_kwargs_in_mark"
+        "-vs",
+        "--instrument=json",
+        f"{tests_filename}::test_with_args_and_kwargs_in_mark",
     )
     result.assert_outcomes(passed=1)
 
@@ -92,7 +94,7 @@ def test_with_single_arg_and_single_kwarg_in_mark_instrument(testdir, tests_file
 
 def test_without_args_or_kwars_in_mark_instrument(testdir, tests_filename):
     result = testdir.runpytest(
-        "-vs", "--instrument", f"{tests_filename}::test_without_mark"
+        "-vs", "--instrument=json", f"{tests_filename}::test_without_mark"
     )
     result.assert_outcomes(passed=1)
 
