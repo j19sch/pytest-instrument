@@ -78,8 +78,8 @@ def test_sublogger(testdir, tests_filename):
     assert log_records[0]["funcName"] == record_funcName
 
 
-def test_logger_with_bind(testdir, tests_filename):
-    test_to_run = "test_logger_with_custom_bind"
+def test_logger_using_extra_kwarg(testdir, tests_filename):
+    test_to_run = "test_logger_with_extra"
     result = testdir.runpytest(
         "-vs",
         "--instrument=json",
@@ -93,12 +93,12 @@ def test_logger_with_bind(testdir, tests_filename):
     assert len(log_records) == 1
     helpers.json_validate_each_record(records)
 
-    assert log_records[0]["custom"] == "custom_bind"
+    assert log_records[0]["a little"] == "a lot"
 
     record_name = "instr.log"
     record_level = "INFO"
-    record_lineno = 17
-    record_message = "This should have a custom bind."
+    record_lineno = 23
+    record_message = "This should have something extra."
 
     result.stdout.fnmatch_lines(
         f"{record_level}     {record_name}:{tests_filename}:{record_lineno} {record_message}"
