@@ -61,6 +61,8 @@ You can install "pytest-instrument" via `pip`_ from `PyPI`_::
     $ pip install pytest-instrument
 
 
+Note that this plugin calls `structlog.configure()`, so it can affect the configuration of other structlog loggers.
+
 Usage
 -----
 
