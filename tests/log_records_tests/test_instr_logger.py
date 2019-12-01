@@ -76,3 +76,30 @@ def test_sublogger(testdir, tests_filename):
     assert log_records[0]["name"] == record_name
     assert log_records[0]["filename"] == record_filename
     assert log_records[0]["funcName"] == record_funcName
+
+
+def test_logger_with_bind(testdir, tests_filename):
+    test_to_run = "test_logger_with_custom_bind"
+    result = testdir.runpytest(
+        "-vs",
+        "--instrument=json",
+        "--log-cli-level=debug",
+        f"{tests_filename}::{test_to_run}",
+    )
+    result.assert_outcomes(error=0, failed=0, passed=1)
+
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    log_records = [record for record in records if record["name"] == "instr.log"]
+    assert len(log_records) == 1
+    helpers.json_validate_each_record(records)
+
+    assert log_records[0]["custom"] == "custom_bind"
+
+    record_name = "instr.log"
+    record_level = "INFO"
+    record_lineno = 17
+    record_message = "This should have a custom bind."
+
+    result.stdout.fnmatch_lines(
+        f"{record_level}     {record_name}:{tests_filename}:{record_lineno} {record_message}"
+    )
