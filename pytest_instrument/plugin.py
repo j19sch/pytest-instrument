@@ -22,6 +22,7 @@ def pytest_configure(config):
 
 
 def pytest_sessionstart(session):
+    # ToDO: configure structlog via structlog.wrap_logger() to  have isolated config
     structlog.configure(
         processors=[
             structlog.stdlib.PositionalArgumentsFormatter(),
@@ -44,19 +45,7 @@ def pytest_sessionstart(session):
     else:
         log_handler = logging.NullHandler()
 
-    # logger = structlog.wrap_logger(logging.getLogger("instr.log"), processors=[
-    #         structlog.stdlib.PositionalArgumentsFormatter(),
-    #         structlog.processors.StackInfoRenderer(),
-    #         structlog.processors.format_exc_info,
-    #         structlog.processors.UnicodeDecoder(),
-    #         structlog.stdlib.render_to_log_kwargs,
-    #     ],
-    #     wrapper_class=structlog.stdlib.BoundLogger,
-    #     context_class=dict,
-    #     cache_logger_on_first_use=True)
-
     logger = structlog.get_logger("instr.log")
-
     logger.setLevel("DEBUG")
     logger.addHandler(log_handler)
 
