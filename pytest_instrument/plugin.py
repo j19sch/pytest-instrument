@@ -22,21 +22,6 @@ def pytest_configure(config):
 
 
 def pytest_sessionstart(session):
-    # ToDO: configure structlog via structlog.wrap_logger() to  have isolated config
-    structlog.configure(
-        processors=[
-            structlog.stdlib.PositionalArgumentsFormatter(),
-            structlog.processors.StackInfoRenderer(),
-            structlog.processors.format_exc_info,
-            structlog.processors.UnicodeDecoder(),
-            structlog.stdlib.render_to_log_kwargs,
-        ],
-        context_class=dict,
-        logger_factory=structlog.stdlib.LoggerFactory(),
-        wrapper_class=structlog.stdlib.BoundLogger,
-        cache_logger_on_first_use=True,
-    )
-
     session_id = str(uuid.uuid4())
 
     if session.config.getoption("instrument") == "json":
@@ -45,11 +30,25 @@ def pytest_sessionstart(session):
     else:
         log_handler = logging.NullHandler()
 
-    logger = structlog.get_logger("instr.log")
+    logger = logging.getLogger("instr.log")
     logger.setLevel("DEBUG")
     logger.addHandler(log_handler)
 
-    session_bound_logger = logger.bind(session_id=session_id)
+    struct_logger = structlog.wrap_logger(
+        logger,
+        processors=[
+            structlog.stdlib.PositionalArgumentsFormatter(),
+            structlog.processors.StackInfoRenderer(),
+            structlog.processors.format_exc_info,
+            structlog.processors.UnicodeDecoder(),
+            structlog.stdlib.render_to_log_kwargs,
+        ],
+        context_class=dict,
+        wrapper_class=structlog.stdlib.BoundLogger,
+        cache_logger_on_first_use=True,
+    )
+
+    session_bound_logger = struct_logger.bind(session_id=session_id)
 
     session.config.instrument = {
         "session_id": session_id,
