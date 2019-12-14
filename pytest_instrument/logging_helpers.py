@@ -10,6 +10,7 @@ from pythonjsonlogger import jsonlogger
 # https://stackoverflow.com/questions/19615876/showing-the-right-funcname-when-wrapping-logger-functionality-in-a-custom-class
 # https://stackoverflow.com/questions/32443808/best-way-to-override-lineno-in-python-logger
 
+
 class InstLogger(logging.Logger):
     def __init__(self, name):
         super().__init__(name)
