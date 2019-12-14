@@ -26,8 +26,7 @@ setup(
     python_requires=">=3.6",
     install_requires=[
         "pytest>=5.1.0",
-        "python-json-logger>=0.1.11",
-        "structlog>=19.2.0",
+        "python-json-logger>=0.1.11"
     ],
     tests_require=["jsonschema>=3.1.1"],
     classifiers=[
