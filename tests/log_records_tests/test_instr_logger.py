@@ -27,7 +27,7 @@ def test_emit_log_record(testdir, tests_filename):
 
     record_name = "instr.log"
     record_level = "ERROR"
-    record_lineno = 5
+    record_lineno = 2
     record_message = "Oh no, there is an error!"
     record_filename = "test_instr_logger_examples.py"
     record_funcName = "test_passes"
@@ -62,7 +62,7 @@ def test_sublogger(testdir, tests_filename):
 
     record_name = "instr.log.sublogger"
     record_level = "INFO"
-    record_lineno = 12
+    record_lineno = 9
     record_message = "this actually works"
     record_filename = "test_instr_logger_examples.py"
     record_funcName = "test_sub_logger"
@@ -97,7 +97,7 @@ def test_logger_using_extra_kwarg(testdir, tests_filename):
 
     record_name = "instr.log"
     record_level = "INFO"
-    record_lineno = 23
+    record_lineno = 14
     record_message = "This should have something extra."
 
     result.stdout.fnmatch_lines(
