@@ -10,6 +10,5 @@ def test_sub_logger(request):
 
 
 def test_logger_with_extra(request):
-    request.config.instrument["logger"].info(
-        "This should have something extra.", extra={"a little": "a lot"}
-    )
+    logger = request.config.instrument["logger"]
+    logger.info("This should have something extra.", extra={"a little": "a lot"})
