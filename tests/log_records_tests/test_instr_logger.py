@@ -89,11 +89,6 @@ def test_logger_using_extra_kwarg(testdir, tests_filename):
     assert len(log_records) == 1
     helpers.json_validate_each_record(records)
 
-    assert log_records[0]["a little"] == "a lot"
-    assert log_records[0]["filename"] == tests_filename
-    assert log_records[0]["funcName"] == test_to_run
-    assert log_records[0]["lineno"] == record_lineno
-
     record_name = "instr.log"
     record_level = "INFO"
     record_lineno = 14
@@ -102,3 +97,7 @@ def test_logger_using_extra_kwarg(testdir, tests_filename):
     result.stdout.fnmatch_lines(
         f"{record_level}     {record_name}:{tests_filename}:{record_lineno} {record_message}"
     )
+    assert log_records[0]["a little"] == "a lot"
+    assert log_records[0]["filename"] == tests_filename
+    assert log_records[0]["funcName"] == test_to_run
+    assert log_records[0]["lineno"] == record_lineno
