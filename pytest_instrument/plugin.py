@@ -4,6 +4,7 @@ from datetime import datetime
 
 import pytest
 
+from pytest_instrument.backport_configurable_stacklevel import patch_logger
 from pytest_instrument.logging_helpers import setup_log_file_handler, InstLogger
 
 
@@ -29,7 +30,7 @@ def pytest_sessionstart(session):
     else:
         log_handler = logging.NullHandler()
 
-    logging.setLoggerClass(InstLogger)
+    logging.setLoggerClass(patch_logger(InstLogger))
     logger = logging.getLogger("instr.log")
     logger.setLevel("DEBUG")
     logger.addHandler(log_handler)
