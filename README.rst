@@ -80,12 +80,12 @@ regardless of the `--instrument` option being set or not.
 If you want to add your own logger, you can do that like this:
 
 .. code-block:: python
-
+    sublogger = logging.getLogger("instr.log").getChild("sublogger")
+or
+.. code-block:: python
     sublogger = request.config.instrument["logger"].getChild("sublogger")
-    sublogger.session_id = request.config.instrument["session_id"]
-    sublogger.node_id = request.node.nodeid
 
-Note that you have the set the session id and node id yourself, to have those in the log record.
+The session id and node id are set automatically via the :code:`getChild()` method.
 
 
 Labels and tags

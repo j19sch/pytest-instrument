@@ -1,11 +1,17 @@
+import logging
+
+
 def test_passes(request):
     request.config.instrument["logger"].error("Oh no, there is an error!")
 
 
-def test_sub_logger(request):
+def test_sub_logger_from_request(request):
     sublogger = request.config.instrument["logger"].getChild("sublogger")
-    sublogger.session_id = request.config.instrument["session_id"]
-    sublogger.node_id = request.node.nodeid
+    sublogger.info("this actually works")
+
+
+def test_sub_logger_from_getLogger():
+    sublogger = logging.getLogger("instr.log").getChild("sublogger")
     sublogger.info("this actually works")
 
 

@@ -12,6 +12,12 @@ class InstLogger(logging.Logger):
         self.session_id = None
         self.node_id = None
 
+    def getChild(self, suffix):
+        child_logger = super().getChild(suffix)
+        child_logger.session_id = self.session_id
+        child_logger.node_id = self.node_id
+        return child_logger
+
     def debug(self, msg, extra=None, *args, **kwargs):
         extra = {} if extra is None else extra
         y = {"session_id": self.session_id, "node_id": self.node_id}
