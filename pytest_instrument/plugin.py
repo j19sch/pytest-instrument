@@ -3,9 +3,9 @@ import uuid
 from datetime import datetime
 
 import pytest
-import structlog
 
-from pytest_instrument.logging_helpers import setup_log_file_handler
+from pytest_instrument.backport_configurable_stacklevel import patch_logger
+from pytest_instrument.logging_helpers import setup_log_file_handler, InstLogger
 
 
 def pytest_addoption(parser):
@@ -22,21 +22,6 @@ def pytest_configure(config):
 
 
 def pytest_sessionstart(session):
-    # ToDO: configure structlog via structlog.wrap_logger() to  have isolated config
-    structlog.configure(
-        processors=[
-            structlog.stdlib.PositionalArgumentsFormatter(),
-            structlog.processors.StackInfoRenderer(),
-            structlog.processors.format_exc_info,
-            structlog.processors.UnicodeDecoder(),
-            structlog.stdlib.render_to_log_kwargs,
-        ],
-        context_class=dict,
-        logger_factory=structlog.stdlib.LoggerFactory(),
-        wrapper_class=structlog.stdlib.BoundLogger,
-        cache_logger_on_first_use=True,
-    )
-
     session_id = str(uuid.uuid4())
 
     if session.config.getoption("instrument") == "json":
@@ -45,15 +30,16 @@ def pytest_sessionstart(session):
     else:
         log_handler = logging.NullHandler()
 
-    logger = structlog.get_logger("instr.log")
+    logging.setLoggerClass(patch_logger(InstLogger))
+    logger = logging.getLogger("instr.log")
     logger.setLevel("DEBUG")
     logger.addHandler(log_handler)
 
-    session_bound_logger = logger.bind(session_id=session_id)
+    logger.session_id = session_id
 
     session.config.instrument = {
         "session_id": session_id,
-        "logger": session_bound_logger,
+        "logger": logger,
         "logfile_handler": log_handler,
     }
 
@@ -96,12 +82,7 @@ def pytest_runtest_setup(item):
     fixtures = None if not fixtures else fixtures
     item.user_properties.append(("fixtures", fixtures))
 
-    try:
-        logger = item.config.instrument["logger"].unbind("node_id")
-    except KeyError:
-        logger = item.config.instrument["logger"]
-
-    item.config.instrument["logger"] = logger.bind(node_id=item._nodeid)
+    item.config.instrument["logger"].node_id = item._nodeid
 
 
 @pytest.hookimpl(hookwrapper=True)
