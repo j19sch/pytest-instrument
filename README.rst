@@ -89,7 +89,8 @@ or
 
     sublogger = request.config.instrument["logger"].getChild("sublogger")
 
-The session id and node id are set automatically via the :code:`getChild()` method.
+The session id and node id are set automatically in the :code:`getChild()` method. The node id is updated automatically
+via pytests's :code:`pytest_runtest_setup()` hook.
 
 
 Labels and tags

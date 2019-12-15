@@ -84,6 +84,13 @@ def pytest_runtest_setup(item):
 
     item.config.instrument["logger"].node_id = item._nodeid
 
+    for logger in [
+        logging.getLogger(name)
+        for name in logging.root.manager.loggerDict
+        if "instr.log" in name
+    ]:
+        logger.node_id = item._nodeid
+
 
 @pytest.hookimpl(hookwrapper=True)
 def pytest_runtest_makereport(item, call):
