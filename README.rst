@@ -69,7 +69,7 @@ Run your tests with::
     $ pytest --instrument=json
 
 An `./artifacts` directory will be created if it doesn't exist yet. For each `pytest` session one `.log` file
-will be written to that directory.
+will be written to that directory. The format of the filename is :code:`%Y%m%dT%H%M%S_<first group of session id>.log`.
 
 To display the contents of the `.log` file, use `jq`: :code:`jq . <filename>`. Or, if for instance you only want to
 see the message object of each record: :code:`jq '{message: .message}' <filename>`

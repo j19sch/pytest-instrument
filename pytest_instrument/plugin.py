@@ -25,7 +25,7 @@ def pytest_sessionstart(session):
     session_id = str(uuid.uuid4())
 
     if session.config.getoption("instrument") == "json":
-        filename = f"{datetime.now().strftime('%Y%m%dT%H%M%S')}_{session_id}.log"
+        filename = f"{datetime.now().strftime('%Y%m%dT%H%M%S')}_{session_id[:8]}.log"
         log_handler = setup_log_file_handler(filename, "json")
     else:
         log_handler = logging.NullHandler()

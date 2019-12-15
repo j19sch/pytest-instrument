@@ -1,10 +1,8 @@
 from pathlib import PurePath
-from uuid import UUID
 
 import pytest
 
 from tests import helpers
-from tests.helpers import validate_timestamp
 
 
 @pytest.fixture(scope="function")
@@ -25,13 +23,11 @@ def test_single_log_file_is_created_with_instrument_option(testdir, tests_filena
     assert len(log_files) == 1
 
     split_log_file_basename = PurePath(log_files[0]).stem.split("_", maxsplit=1)
-    validate_timestamp(split_log_file_basename[0], "%Y%m%dT%H%M%S")
-    try:
-        UUID(split_log_file_basename[1], version=4)
-    except (AttributeError, ValueError):
-        assert (
-            False
-        ), f"Log file name uuid {split_log_file_basename[1]} is not a valid v4 UUID."
+    helpers.validate_timestamp(split_log_file_basename[0], "%Y%m%dT%H%M%S")
+
+    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    session_id = records[0]["session_id"]
+    assert split_log_file_basename[1] == session_id[:8]
 
 
 def test_no_file_created_without_instrument_option(testdir, tests_filename):
