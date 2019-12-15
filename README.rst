@@ -87,6 +87,7 @@ You can use this logger like this:
 You can also create children of that logger, which will emit records to that same file:
 
 .. code-block:: python
+
     sublogger = logging.getLogger("instr.log").getChild("sublogger")
     logger.warning("log record of level warning")
 
