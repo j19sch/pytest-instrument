@@ -1,8 +1,12 @@
 import logging
 
 
-def test_passes(request):
+def test_logger_from_request(request):
     request.config.instrument["logger"].error("Oh no, there is an error!")
+
+
+def test_logger_from_getLogger():
+    logging.getLogger("instr.log").error("Oh no, there is an error!")
 
 
 def test_sub_logger_from_request(request):
@@ -15,6 +19,6 @@ def test_sub_logger_from_getLogger():
     sublogger.info("this actually works")
 
 
-def test_logger_with_extra(request):
-    logger = request.config.instrument["logger"]
+def test_logger_with_extra():
+    logger = logging.getLogger("instr.log")
     logger.info("This should have something extra.", extra={"a little": "a lot"})

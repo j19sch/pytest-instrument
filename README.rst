@@ -74,23 +74,24 @@ will be written to that directory. The format of the filename is :code:`%Y%m%dT%
 To display the contents of the `.log` file, use `jq`: :code:`jq . <filename>`. Or, if for instance you only want to
 see the message object of each record: :code:`jq '{message: .message}' <filename>`
 
-The logger outputting records to the same file is available as :code:`request.config.instrument["logger"]`,
-regardless of the `--instrument` option being set or not.
+The logger reporting on the outcome of pytest's setup, call and teardown is named "instr.report".
 
-If you want to add your own logger, you can do that like this:
+The logger emitting records to the same file as the "instr.report" logger is named "instr.log".
+You can use this logger like this:
 
 .. code-block:: python
 
+    logger = logging.getLogger("instr.log")
+    logger.info("log record of level info")
+
+You can also create children of that logger, which will emit records to that same file:
+
+.. code-block:: python
     sublogger = logging.getLogger("instr.log").getChild("sublogger")
+    logger.warning("log record of level warning")
 
-or
-
-.. code-block:: python
-
-    sublogger = request.config.instrument["logger"].getChild("sublogger")
-
-The session id and node id are set automatically in the :code:`getChild()` method. The node id is updated automatically
-via pytests's :code:`pytest_runtest_setup()` hook.
+The session id and node id of the "instr.log" logger and its children are set automatically in the :code:`getChild()` method.
+The node id is updated automatically via pytests's :code:`pytest_runtest_setup()` hook.
 
 
 Labels and tags
