@@ -13,7 +13,8 @@ def pytest_addoption(parser):
         "--instrument",
         action="store",
         default=None,
-        help="enable pytest-instrument output: json",
+        type=lambda s: [item for item in s.split(",")],
+        help="enable pytest-instrument output; comma-separated list; expected valued: json, log",
     )
 
 
@@ -24,9 +25,12 @@ def pytest_configure(config):
 def pytest_sessionstart(session):
     session_id = str(uuid.uuid4())
 
-    if session.config.getoption("instrument") == "json":
-        filename = f"{datetime.now().strftime('%Y%m%dT%H%M%S')}_{session_id[:8]}.log"
-        log_handler = setup_log_file_handler(filename, "json")
+    if session.config.getoption("instrument") is not None:
+        if "json" in session.config.getoption("instrument"):
+            filename = (
+                f"{datetime.now().strftime('%Y%m%dT%H%M%S')}_{session_id[:8]}.log"
+            )
+            log_handler = setup_log_file_handler(filename, "json")
     else:
         log_handler = logging.NullHandler()
 
@@ -103,37 +107,42 @@ def pytest_runtest_makereport(item, call):
 
 
 def _log_report(report, config):
-    labels_and_tags = {}
-    for prop in (prop for prop in report.user_properties if prop[0] == "instrument"):
-        labels_and_tags = prop[1]
+    if config.getoption("instrument") is not None:
+        labels_and_tags = {}
+        for prop in (
+            prop for prop in report.user_properties if prop[0] == "instrument"
+        ):
+            labels_and_tags = prop[1]
 
-    timestamps = {}
-    for prop in (prop for prop in report.user_properties if prop[0] == report.when):
-        timestamps = prop[1]
+        timestamps = {}
+        for prop in (prop for prop in report.user_properties if prop[0] == report.when):
+            timestamps = prop[1]
 
-    fixtures = []
-    for prop in (prop for prop in report.user_properties if prop[0] == "fixtures"):
-        fixtures = prop[1]
+        fixtures = []
+        for prop in (prop for prop in report.user_properties if prop[0] == "fixtures"):
+            fixtures = prop[1]
 
-    record = {
-        "name": "instr.report",
-        # ToDo: set level based on passed, skipped, failed
-        "level": "INFO",
-        "msg": f"{report.nodeid} {report.when} {report.outcome}",
-        "session_id": config.instrument["session_id"],
-        "node_id": report.nodeid,
-        "when": report.when,
-        "outcome": report.outcome,
-        "start": str(timestamps["start"]),
-        "stop": str(timestamps["stop"]),
-        "duration": f"{report.duration:.12f}",
-        "labels": labels_and_tags.get("labels", None),
-        "tags": labels_and_tags.get("tags", None),
-        "fixtures": fixtures,
-    }
+        record = {
+            "name": "instr.report",
+            # ToDo: set level based on passed, skipped, failed
+            "level": "INFO",
+            "msg": f"{report.nodeid} {report.when} {report.outcome}",
+            "session_id": config.instrument["session_id"],
+            "node_id": report.nodeid,
+            "when": report.when,
+            "outcome": report.outcome,
+            "start": str(timestamps["start"]),
+            "stop": str(timestamps["stop"]),
+            "duration": f"{report.duration:.12f}",
+            "labels": labels_and_tags.get("labels", None),
+            "tags": labels_and_tags.get("tags", None),
+            "fixtures": fixtures,
+        }
 
-    if config.getoption("instrument") == "json":
-        # Reason for makeLogRecord() and emit() instead of using a logger is to prevent
-        # these records from being captured and thus sent to stdout by pytest.
-        log_record = logging.makeLogRecord(record)
-        config.instrument["logfile_handler"].emit(log_record)
+        if "json" in config.getoption("instrument"):
+            # Reason for makeLogRecord() and emit() instead of using a logger is to prevent
+            # these records from being captured and thus sent to stdout by pytest.
+            log_record = logging.makeLogRecord(record)
+            config.instrument["logfile_handler"].emit(log_record)
+    else:
+        pass
