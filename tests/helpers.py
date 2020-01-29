@@ -1,6 +1,7 @@
 import json
 import os
 from datetime import datetime
+from json import JSONDecodeError
 
 from jsonschema import validate
 
@@ -104,7 +105,12 @@ def get_records_from_log_file_in_artifacts_dir(testdir, filename):
 
     with open(artifacts_dir.join(filename)) as log_file:
         all_records = log_file.readlines()
-        parsed_records = [json.loads(record) for record in all_records]
+
+        # ToDo: this will give confusing test results when writing invalid json
+        try:
+            parsed_records = [json.loads(record) for record in all_records]
+        except JSONDecodeError:
+            parsed_records = all_records
 
     return parsed_records
 

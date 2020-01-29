@@ -53,7 +53,8 @@ def setup_log_file_handler(filename, output_format):
 
     if output_format == "json":
         return json_logfile_handler(log_file)
-    # ToDo: add tests for log_logfile_handler and enable
+    elif output_format == "log":
+        return log_logfile_handler(log_file)
 
 
 def json_logfile_handler(logfile):
@@ -83,7 +84,7 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
 def log_logfile_handler(logfile):
     # ToDo: decide default format
     formatter = logging.Formatter(
-        "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        "%(asctime)s - %(name)s - %(levelname)s - %(node_id)s - %(message)s"
     )
     log_handler = logging.FileHandler(logfile)
     log_handler.setFormatter(formatter)
