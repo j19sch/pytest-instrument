@@ -25,17 +25,20 @@ def pytest_configure(config):
 def pytest_sessionstart(session):
     session_id = str(uuid.uuid4())
 
+    log_handlers = []
     if session.config.getoption("instrument") is not None:
         if "json" in session.config.getoption("instrument"):
             filename = (
-                f"{datetime.now().strftime('%Y%m%dT%H%M%S')}_{session_id[:8]}.log"
+                f"{datetime.now().strftime('%Y%m%dT%H%M%S')}_{session_id[:8]}.json"
             )
-            log_handler = setup_log_file_handler(filename, "json")
-        elif "log" in session.config.getoption("instrument"):
+            log_handler_json = setup_log_file_handler(filename, "json")
+            log_handlers.append(log_handler_json)
+        if "log" in session.config.getoption("instrument"):
             filename = (
                 f"{datetime.now().strftime('%Y%m%dT%H%M%S')}_{session_id[:8]}.log"
             )
-            log_handler = setup_log_file_handler(filename, "log")
+            log_handler_plain = setup_log_file_handler(filename, "log")
+            log_handlers.append(log_handler_plain)
 
             record = {
                 "name": "instr.report",
@@ -46,29 +49,29 @@ def pytest_sessionstart(session):
             }
 
             log_record = logging.makeLogRecord(record)
-            log_handler.emit(log_record)
+            log_handler_plain.emit(log_record)
     else:
-        log_handler = logging.NullHandler()
+        log_handlers.append(logging.NullHandler())
 
     logging.setLoggerClass(patch_logger(InstLogger))
     logger = logging.getLogger("instr.log")
     logger.setLevel("DEBUG")
-    logger.addHandler(log_handler)
+    for handler in log_handlers:
+        logger.addHandler(handler)
 
     logger.session_id = session_id
 
     session.config.instrument = {
         "session_id": session_id,
         "logger": logger,
-        "logfile_handler": log_handler,
+        "logfile_handler": log_handlers,
     }
 
 
 def pytest_sessionfinish(session, exitstatus):
-    session.config.instrument["logfile_handler"].close()
-    session.config.instrument["logger"].removeHandler(
-        session.config.instrument["logfile_handler"]
-    )
+    for handler in session.config.instrument["logfile_handler"]:
+        handler.close()
+        session.config.instrument["logger"].removeHandler(handler)
 
 
 def pytest_addhooks(pluginmanager):
@@ -156,15 +159,9 @@ def _log_report(report, config):
             "fixtures": fixtures,
         }
 
-        if "json" in config.getoption("instrument"):
-            # Reason for makeLogRecord() and emit() instead of using a logger is to prevent
-            # these records from being captured and thus sent to stdout by pytest.
-            log_record = logging.makeLogRecord(record)
-            config.instrument["logfile_handler"].emit(log_record)
-        elif "log" in config.getoption("instrument"):
-            # Reason for makeLogRecord() and emit() instead of using a logger is to prevent
-            # these records from being captured and thus sent to stdout by pytest.
-            log_record = logging.makeLogRecord(record)
-            config.instrument["logfile_handler"].emit(log_record)
+        log_record = logging.makeLogRecord(record)
+        for handler in config.instrument["logfile_handler"]:
+            handler.emit(log_record)
+
     else:
         pass

@@ -1,7 +1,6 @@
 import json
 import os
 from datetime import datetime
-from json import JSONDecodeError
 
 from jsonschema import validate
 
@@ -100,26 +99,37 @@ def get_files_from_artifacts_dir_by_extension(testdir, extension):
     return files
 
 
-def get_records_from_log_file_in_artifacts_dir(testdir, filename):
+def get_records_from_json_log_file_in_artifacts_dir(testdir, filename):
+    artifacts_dir = testdir.tmpdir.join(ARTIFACTS_DIRNAME)
+
+    with open(artifacts_dir.join(filename)) as log_file:
+        all_records = log_file.readlines()
+        parsed_records = [json.loads(record) for record in all_records]
+
+    return parsed_records
+
+
+def get_records_from_plain_log_file_in_artifacts_dir(testdir, filename):
     artifacts_dir = testdir.tmpdir.join(ARTIFACTS_DIRNAME)
 
     with open(artifacts_dir.join(filename)) as log_file:
         all_records = log_file.readlines()
 
-        # ToDo: this will give confusing test results when writing invalid json
-        try:
-            parsed_records = [json.loads(record) for record in all_records]
-        except JSONDecodeError:
-            parsed_records = all_records
-
-    return parsed_records
+    return all_records
 
 
-def get_log_file_from_artifacts_dir_and_return_records(testdir):
+def get_json_log_file_from_artifacts_dir_and_return_records(testdir):
+    log_files = get_files_from_artifacts_dir_by_extension(testdir, "json")
+    assert len(log_files) == 1
+
+    return get_records_from_json_log_file_in_artifacts_dir(testdir, log_files[0])
+
+
+def get_plain_log_file_from_artifacts_dir_and_return_records(testdir):
     log_files = get_files_from_artifacts_dir_by_extension(testdir, "log")
     assert len(log_files) == 1
 
-    return get_records_from_log_file_in_artifacts_dir(testdir, log_files[0])
+    return get_records_from_plain_log_file_in_artifacts_dir(testdir, log_files[0])
 
 
 def json_validate_each_record(records):

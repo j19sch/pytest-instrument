@@ -20,7 +20,7 @@ def test_get_logger_from_request_fixture_and_emit_log_record(testdir, tests_file
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     log_records = [record for record in records if record["name"] == "instr.log"]
     assert len(log_records) == 1
     helpers.json_validate_each_record(records)
@@ -51,7 +51,7 @@ def test_getLogger_and_emit_log_record(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     log_records = [record for record in records if record["name"] == "instr.log"]
     assert len(log_records) == 1
     helpers.json_validate_each_record(records)
@@ -82,7 +82,7 @@ def test_sublogger_from_logger_in_request_fixture(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     log_records = [
         record for record in records if record["name"] == "instr.log.sublogger"
     ]
@@ -115,7 +115,7 @@ def test_sublogger_of_getLogger_logger(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     log_records = [
         record for record in records if record["name"] == "instr.log.sublogger"
     ]
@@ -148,7 +148,7 @@ def test_logger_using_extra_kwarg(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     log_records = [record for record in records if record["name"] == "instr.log"]
     assert len(log_records) == 1
     helpers.json_validate_each_record(records)

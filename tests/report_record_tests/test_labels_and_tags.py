@@ -16,7 +16,7 @@ def test_single_arg_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_labels = ["a_mark"]
@@ -31,7 +31,7 @@ def test_single_kwarg_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_tags = {"my_mark": "a_mark"}
@@ -46,7 +46,7 @@ def test_multiple_args_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_labels = ["a_mark", "another_mark"]
@@ -61,7 +61,7 @@ def test_multiple_kwargs_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_tags = {"my_mark": "a_mark", "my_other_mark": "another_mark"}
@@ -78,7 +78,7 @@ def test_with_single_arg_and_single_kwarg_in_mark_instrument(testdir, tests_file
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_labels = ["a_mark"]
@@ -98,7 +98,7 @@ def test_without_args_or_kwars_in_mark_instrument(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_labels = None

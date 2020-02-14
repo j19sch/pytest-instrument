@@ -15,7 +15,7 @@ def test_record_id(testdir, tests_filename):
     result = testdir.runpytest("-vs", "--instrument=json", f"{tests_filename}")
     result.assert_outcomes(error=0, failed=0, passed=4)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     for record in records:
@@ -33,7 +33,7 @@ def test_session_id(testdir, tests_filename):
     result = testdir.runpytest("-vs", "--instrument=json", f"{tests_filename}")
     result.assert_outcomes(error=0, failed=0, passed=4)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     for record in records:

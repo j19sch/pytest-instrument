@@ -16,7 +16,7 @@ def test_update_node_id(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=2)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     log_records = [
         record for record in records if record["name"].startswith("instr.log")
     ]

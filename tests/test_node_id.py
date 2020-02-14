@@ -17,7 +17,7 @@ def test_with_test_as_function(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_node_id = f"{tests_filename}::{test_to_run}"
@@ -34,7 +34,7 @@ def test_with_test_in_class(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_node_id = f"{tests_filename}::{class_to_run}::{test_to_run}"
@@ -54,7 +54,7 @@ def test_with_test_in_folder(testdir):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_node_id = f"{tests_folder}/{tests_filename}::{test_to_run}"
@@ -70,7 +70,7 @@ def test_with_test_using_all_fixtures_and_loggers(testdir, tests_filename):
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     expected_node_id = f"{tests_filename}::{test_to_run}"
