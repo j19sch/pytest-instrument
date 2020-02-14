@@ -64,13 +64,17 @@ def test_two_log_files_are_created_with_json_and_log_instrument_option(
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    log_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "json")
-    assert len(log_files) == 1
+    json_log_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "json")
+    assert len(json_log_files) == 1
+
+    plain_log_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "log")
+    assert len(plain_log_files) == 1
+
+    assert PurePath(json_log_files[0]).stem == PurePath(plain_log_files[0]).stem
+
     records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     session_id_json = records[0]["session_id"]
 
-    log_files = helpers.get_files_from_artifacts_dir_by_extension(testdir, "log")
-    assert len(log_files) == 1
     records = helpers.get_plain_log_file_from_artifacts_dir_and_return_records(testdir)
     pattern = re.compile(r"^.+ session id: (.+)$")
     match = pattern.search(records[0])
