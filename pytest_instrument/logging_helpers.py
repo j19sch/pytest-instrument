@@ -82,7 +82,6 @@ class CustomJsonFormatter(jsonlogger.JsonFormatter):
 
 
 def log_logfile_handler(logfile):
-    # ToDo: decide default format
     formatter = logging.Formatter(
         "%(asctime)s - %(name)s - %(levelname)s - %(node_id)s - %(message)s"
     )
