@@ -13,7 +13,7 @@ def read(fname):
 
 setup(
     name="pytest-instrument",
-    version="0.2.0",
+    version="0.3.0",
     author="Joep Schuurkes",
     author_email="j19sch@gmail.com",
     maintainer="Joep Schuurkes",
@@ -27,7 +27,7 @@ setup(
     install_requires=["pytest>=5.1.0", "python-json-logger>=0.1.11"],
     tests_require=["jsonschema>=3.1.1"],
     classifiers=[
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Framework :: Pytest",
         "Intended Audience :: Developers",
         "Topic :: Software Development :: Testing",

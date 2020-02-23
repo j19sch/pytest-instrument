@@ -2,8 +2,8 @@
 Changelog
 =========
 
-0.3.0 // tbd
-------------
+0.3.0 // 2020-02-23
+-------------------
 - Next to `json` the `--instrument` parameter now also accepts `log` to send output to a regular log file.
 
 
