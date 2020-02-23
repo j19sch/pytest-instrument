@@ -2,6 +2,11 @@
 Changelog
 =========
 
+0.3.0 // tbd
+------------
+- Next to `json` the `--instrument` parameter now also accepts `log` to send output to a regular log file.
+
+
 0.2.0 // 2019-12-15
 -------------------
 - The `--instrument` parameter now requires value, e.g. `--instrument=json` (only one supported currently).

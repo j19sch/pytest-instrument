@@ -9,17 +9,27 @@ def test_label_hook_sets_first_label(testdir):
 
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
-        "-vs", "--instrument=json", f"--env={label}", f"{tests_filename}::{test_to_run}"
+        "-vs",
+        "--instrument=json,log",
+        f"--env={label}",
+        f"{tests_filename}::{test_to_run}",
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.json_validate_each_record(records)
+    json_records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(
+        testdir
+    )
+    helpers.json_validate_each_record(json_records)
 
     expected_labels = [label]
     assert len(
-        [record for record in records if record["labels"] == expected_labels]
-    ) == len(records)
+        [record for record in json_records if record["labels"] == expected_labels]
+    ) == len(json_records)
+
+    log_records = helpers.get_plain_log_file_from_artifacts_dir_and_return_records(
+        testdir
+    )
+    assert len(log_records[1:]) == len(json_records)
 
 
 def test_label_hook_adds_label(testdir):
@@ -30,17 +40,27 @@ def test_label_hook_adds_label(testdir):
 
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
-        "-vs", "--instrument=json", f"--env={label}", f"{tests_filename}::{test_to_run}"
+        "-vs",
+        "--instrument=json,log",
+        f"--env={label}",
+        f"{tests_filename}::{test_to_run}",
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.json_validate_each_record(records)
+    json_records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(
+        testdir
+    )
+    helpers.json_validate_each_record(json_records)
 
     expected_labels = ["a_mark", label]
     assert len(
-        [record for record in records if record["labels"] == expected_labels]
-    ) == len(records)
+        [record for record in json_records if record["labels"] == expected_labels]
+    ) == len(json_records)
+
+    log_records = helpers.get_plain_log_file_from_artifacts_dir_and_return_records(
+        testdir
+    )
+    assert len(log_records[1:]) == len(json_records)
 
 
 def test_tag_hook_sets_first_tag(testdir):
@@ -53,19 +73,26 @@ def test_tag_hook_sets_first_tag(testdir):
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
         "-vs",
-        "--instrument=json",
+        "--instrument=json,log",
         f"--{tag_key}={tag_value}",
         f"{tests_filename}::{test_to_run}",
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.json_validate_each_record(records)
+    json_records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(
+        testdir
+    )
+    helpers.json_validate_each_record(json_records)
 
     expected_tags = {tag_key: tag_value}
     assert len(
-        [record for record in records if record["tags"] == expected_tags]
-    ) == len(records)
+        [record for record in json_records if record["tags"] == expected_tags]
+    ) == len(json_records)
+
+    log_records = helpers.get_plain_log_file_from_artifacts_dir_and_return_records(
+        testdir
+    )
+    assert len(log_records[1:]) == len(json_records)
 
 
 def test_tag_hook_adds_tag(testdir):
@@ -78,19 +105,26 @@ def test_tag_hook_adds_tag(testdir):
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
         "-vs",
-        "--instrument=json",
+        "--instrument=json,log",
         f"--{tag_key}={tag_value}",
         f"{tests_filename}::{test_to_run}",
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.json_validate_each_record(records)
+    json_records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(
+        testdir
+    )
+    helpers.json_validate_each_record(json_records)
 
     expected_tags = {"my_mark": "a_mark", tag_key: tag_value}
     assert len(
-        [record for record in records if record["tags"] == expected_tags]
-    ) == len(records)
+        [record for record in json_records if record["tags"] == expected_tags]
+    ) == len(json_records)
+
+    log_records = helpers.get_plain_log_file_from_artifacts_dir_and_return_records(
+        testdir
+    )
+    assert len(log_records[1:]) == len(json_records)
 
 
 def test_fixture_hook_removes_fixture(testdir):
@@ -100,13 +134,20 @@ def test_fixture_hook_removes_fixture(testdir):
 
     testdir.copy_example(tests_folder)
     result = testdir.runpytest(
-        "-vs", "--instrument=json", f"{tests_filename}::{test_to_run}"
+        "-vs", "--instrument=json,log", f"{tests_filename}::{test_to_run}"
     )
     result.assert_outcomes(passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
-    helpers.json_validate_each_record(records)
-
-    assert len([record for record in records if record["fixtures"] is None]) == len(
-        records
+    json_records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(
+        testdir
     )
+    helpers.json_validate_each_record(json_records)
+
+    assert len(
+        [record for record in json_records if record["fixtures"] is None]
+    ) == len(json_records)
+
+    log_records = helpers.get_plain_log_file_from_artifacts_dir_and_return_records(
+        testdir
+    )
+    assert len(log_records[1:]) == len(json_records)

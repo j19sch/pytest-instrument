@@ -68,12 +68,21 @@ Run your tests with::
 
     $ pytest --instrument=json
 
-An `./artifacts` directory will be created if it doesn't exist yet. For each `pytest` session one `.log` file
-will be written to that directory. The format of the filename is :code:`%Y%m%dT%H%M%S_<first group of session id>.log`.
+An `./artifacts` directory will be created if it doesn't exist yet. For each `pytest` session one `.json` file
+will be written to that directory. The format of the filename is :code:`%Y%m%dT%H%M%S_<first group of session id>.json`.
 
 To display the contents of the `.log` file, use `jq`: :code:`jq . <filename>`. Or, if for instance you only want to
 see the message object of each record: :code:`jq '{message: .message}' <filename>`
 
+Output to regular log file
+~~~~~~~~~~~~~~~~~~~~~~~~~~
+If you want to output a regular log file, use `--instrument=log` (or `--instrument=json,log` if you want both).
+Note that the regular log file only contains the time, log node name, log level, test node id and log message
+of each log record.
+
+
+Loggers - instr.log and instr.report
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 The logger reporting on the outcome of pytest's setup, call and teardown is named "instr.report".
 
 The logger emitting records to the same file as the "instr.report" logger is named "instr.log".

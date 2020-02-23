@@ -17,7 +17,7 @@ def test_level_field(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     for record in records:
@@ -31,7 +31,7 @@ def test_timestamp_field(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     for record in records:
@@ -45,7 +45,7 @@ def test_name_field(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     for record in records:
@@ -59,7 +59,7 @@ def test_message_field(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     assert len(records) == 3
@@ -87,7 +87,7 @@ def test_filename_field(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     for record in records:
@@ -101,7 +101,7 @@ def test_funcName_field(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     for record in records:
@@ -115,7 +115,7 @@ def test_lineno_field(testdir, tests_filename):
     )
     result.assert_outcomes(error=0, failed=0, passed=1)
 
-    records = helpers.get_log_file_from_artifacts_dir_and_return_records(testdir)
+    records = helpers.get_json_log_file_from_artifacts_dir_and_return_records(testdir)
     helpers.json_validate_each_record(records)
 
     for record in records:
