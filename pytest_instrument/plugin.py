@@ -29,12 +29,12 @@ def pytest_sessionstart(session):
     if session.config.getoption("instrument") is not None:
         current_timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
         if "json" in session.config.getoption("instrument"):
-            filename = f"{current_timestamp}_{session_id[:8]}.json"
-            log_handler_json = setup_log_file_handler(filename, "json")
+            base_filename = f"{current_timestamp}_{session_id[:8]}"
+            log_handler_json = setup_log_file_handler(base_filename, "json")
             log_handlers.append(log_handler_json)
         if "log" in session.config.getoption("instrument"):
-            filename = f"{current_timestamp}_{session_id[:8]}.log"
-            log_handler_plain = setup_log_file_handler(filename, "log")
+            base_filename = f"{current_timestamp}_{session_id[:8]}"
+            log_handler_plain = setup_log_file_handler(base_filename, "log")
             log_handlers.append(log_handler_plain)
 
             record = {

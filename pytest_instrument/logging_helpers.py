@@ -49,7 +49,7 @@ def setup_log_file_handler(filename, output_format):
         os.mkdir("./artifacts", mode=0o777)
     except FileExistsError:
         pass
-    log_file = f"./artifacts/{filename}"
+    log_file = f"./artifacts/{filename}.{output_format}"
 
     if output_format == "json":
         return json_logfile_handler(log_file)
