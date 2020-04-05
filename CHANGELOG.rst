@@ -2,6 +2,11 @@
 Changelog
 =========
 
+0.3.1 // 2020-04-05
+-------------------
+- Refactors `setLoggerClass` implementation to a `Filter`-based one to avoid side effects of `setLoggerClass`.
+
+
 0.3.0 // 2020-02-23
 -------------------
 - Next to `json` the `--instrument` parameter now also accepts `log` to send output to a regular log file.
