@@ -22,3 +22,9 @@ def test_sub_logger_from_getLogger():
 def test_logger_with_extra():
     logger = logging.getLogger("instr.log")
     logger.info("This should have something extra.", extra={"a little": "a lot"})
+
+
+def test_logger_from_different_module():
+    import additional_module
+
+    additional_module.log_warning_from_child()
