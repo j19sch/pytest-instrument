@@ -283,8 +283,8 @@ def test_logger_in_different_module_from_test(
 
     record_name = f"instr.log.{additional_module_filename[:-3]}"
     record_level = "WARNING"
-    record_lineno = 6
-    record_message = "Warning from a different module"
+    record_lineno = 5
+    record_message = "different module"
 
     result.stdout.fnmatch_lines(
         f"{record_level}  {record_name}:{additional_module_filename}:{record_lineno} {record_message}"
