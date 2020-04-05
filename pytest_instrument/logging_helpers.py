@@ -6,42 +6,24 @@ from datetime import datetime
 from pythonjsonlogger import jsonlogger
 
 
-class InstLogger(logging.Logger):
-    def __init__(self, name):
-        super().__init__(name)
-        self.session_id = None
-        self.node_id = None
+class SessionIdFilter(logging.Filter):
+    def __init__(self, session_id):
+        super().__init__()
+        self.session_id = session_id
 
-    def getChild(self, suffix):
-        child_logger = super().getChild(suffix)
-        child_logger.session_id = self.session_id
-        child_logger.node_id = self.node_id
-        return child_logger
+    def filter(self, record):
+        record.session_id = self.session_id
+        return True
 
-    def debug(self, msg, extra=None, *args, **kwargs):
-        extra = {} if extra is None else extra
-        y = {"session_id": self.session_id, "node_id": self.node_id}
-        super().debug(msg, extra={**extra, **y}, stacklevel=2, *args, **kwargs)
 
-    def info(self, msg, extra=None, *args, **kwargs):
-        extra = {} if extra is None else extra
-        y = {"session_id": self.session_id, "node_id": self.node_id}
-        super().info(msg, extra={**extra, **y}, stacklevel=2, *args, **kwargs)
+class NodeIdFilter(logging.Filter):
+    def __init__(self, node_id):
+        super().__init__()
+        self.node_id = node_id
 
-    def warning(self, msg, extra=None, *args, **kwargs):
-        extra = {} if extra is None else extra
-        y = {"session_id": self.session_id, "node_id": self.node_id}
-        super().warning(msg, extra={**extra, **y}, stacklevel=2, *args, **kwargs)
-
-    def critical(self, msg, extra=None, *args, **kwargs):
-        extra = {} if extra is None else extra
-        y = {"session_id": self.session_id, "node_id": self.node_id}
-        super().critical(msg, extra={**extra, **y}, stacklevel=2, *args, **kwargs)
-
-    def error(self, msg, extra=None, *args, **kwargs):
-        extra = {} if extra is None else extra
-        y = {"session_id": self.session_id, "node_id": self.node_id}
-        super().error(msg, extra={**extra, **y}, stacklevel=2, *args, **kwargs)
+    def filter(self, record):
+        record.node_id = self.node_id
+        return True
 
 
 def setup_log_file_handler(filename, output_format):

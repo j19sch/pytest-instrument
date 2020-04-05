@@ -4,8 +4,11 @@ from datetime import datetime
 
 import pytest
 
-from pytest_instrument.backport_configurable_stacklevel import patch_logger
-from pytest_instrument.logging_helpers import setup_log_file_handler, InstLogger
+from pytest_instrument.logging_helpers import (
+    setup_log_file_handler,
+    SessionIdFilter,
+    NodeIdFilter,
+)
 
 
 def pytest_addoption(parser):
@@ -25,18 +28,24 @@ def pytest_configure(config):
 def pytest_sessionstart(session):
     session_id = str(uuid.uuid4())
 
+    session_id_filter = SessionIdFilter(session_id)
+    node_id_filter = NodeIdFilter(node_id=None)
+
     log_handlers = []
     if session.config.getoption("instrument") is not None:
         current_timestamp = datetime.now().strftime("%Y%m%dT%H%M%S")
         if "json" in session.config.getoption("instrument"):
             base_filename = f"{current_timestamp}_{session_id[:8]}"
             log_handler_json = setup_log_file_handler(base_filename, "json")
+            log_handler_json.addFilter(session_id_filter)
+            log_handler_json.addFilter(node_id_filter)
             log_handlers.append(log_handler_json)
         if "log" in session.config.getoption("instrument"):
             base_filename = f"{current_timestamp}_{session_id[:8]}"
             log_handler_plain = setup_log_file_handler(base_filename, "log")
             log_handlers.append(log_handler_plain)
 
+            # add record with session id to plain log file
             record = {
                 "name": "instr.report",
                 "node_id": "",
@@ -50,18 +59,16 @@ def pytest_sessionstart(session):
     else:
         log_handlers.append(logging.NullHandler())
 
-    logging.setLoggerClass(patch_logger(InstLogger))
     logger = logging.getLogger("instr.log")
     logger.setLevel("DEBUG")
     for handler in log_handlers:
         logger.addHandler(handler)
 
-    logger.session_id = session_id
-
     session.config.instrument = {
         "session_id": session_id,
         "logger": logger,
         "logfile_handler": log_handlers,
+        "node_id_filter": node_id_filter,
     }
 
 
@@ -102,14 +109,7 @@ def pytest_runtest_setup(item):
     fixtures = None if not fixtures else fixtures
     item.user_properties.append(("fixtures", fixtures))
 
-    item.config.instrument["logger"].node_id = item._nodeid
-
-    for logger in [
-        logging.getLogger(name)
-        for name in logging.root.manager.loggerDict
-        if "instr.log" in name
-    ]:
-        logger.node_id = item._nodeid
+    item.config.instrument["node_id_filter"].node_id = item._nodeid
 
 
 @pytest.hookimpl(hookwrapper=True)
